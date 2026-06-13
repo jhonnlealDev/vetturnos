@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clase 1 — Del JDK a la Inteligencia Artificial | Dev Senior Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">&lt;/&gt;</span>
+          <div>
+            <strong>Dev Senior Code</strong>
+            <small>Java AI Engineer</small>
+          </div>
+        </div>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar menú">&times;</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <p class="nav-label">Clase 1</p>
+        <a href="#inicio" class="nav-link active" data-section="inicio">
+          <span class="nav-icon">🏠</span> Inicio
+        </a>
+        <a href="#jdk" class="nav-link" data-section="jdk">
+          <span class="nav-icon">☕</span> ¿Qué es el JDK?
+        </a>
+        <a href="#tipos-datos" class="nav-link" data-section="tipos-datos">
+          <span class="nav-icon">📦</span> Tipos de Datos
+        </a>
+        <a href="#editores" class="nav-link" data-section="editores">
+          <span class="nav-icon">💻</span> VS Code vs Cursor
+        </a>
+        <a href="#ai-engineer" class="nav-link" data-section="ai-engineer">
+          <span class="nav-icon">🤖</span> ¿Qué es un AI Engineer?
+        </a>
+        <a href="#rol-java-ai" class="nav-link" data-section="rol-java-ai">
+          <span class="nav-icon">🚀</span> Rol Java AI Engineer
+        </a>
+
+        <p class="nav-label nav-label--reading">Después de la clase</p>
+        <a href="#lectura" class="nav-link nav-link--reading" data-section="lectura">
+          <span class="nav-icon">📖</span> Lectura de Reflexión
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="progress-card">
+          <span>Progreso</span>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <small id="progressText">0 de 7 secciones</small>
+        </div>
+      </div>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Abrir menú">☰</button>
+        <span class="topbar-title" id="topbarTitle">Inicio</span>
+        <span class="topbar-badge">Clase 1</span>
+      </header>
+
+      <div class="content">
+        <!-- INICIO -->
+        <section id="inicio" class="section active">
+          <div class="hero">
+            <div class="hero-badge">Java AI Engineer · Clase 1</div>
+            <h1>Del JDK a la<br><span class="gradient-text">Inteligencia Artificial</span></h1>
+            <p class="hero-subtitle">
+              Fundamentos de Java, herramientas de desarrollo y el camino hacia convertirte en un Java AI Engineer.
+            </p>
+            <div class="hero-actions">
+              <a href="#jdk" class="btn btn-primary">Comenzar la clase</a>
+              <a href="#lectura" class="btn btn-secondary">Ir a la lectura</a>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <article class="topic-card" data-goto="jdk">
+              <div class="topic-card-icon">☕</div>
+              <h3>¿Qué es el JDK?</h3>
+              <p>Kit de desarrollo, JRE, ediciones Java SE, EE y ME.</p>
+              <span class="topic-card-link">Ver tema →</span>
+            </article>
+            <article class="topic-card" data-goto="tipos-datos">
+              <div class="topic-card-icon">📦</div>
+              <h3>Tipos de Datos en Java</h3>
+              <p>Primitivos, referencia, jerarquía y wrapper classes.</p>
+              <span class="topic-card-link">Ver tema →</span>
+            </article>
+            <article class="topic-card" data-goto="editores">
+              <div class="topic-card-icon">💻</div>
+              <h3>VS Code vs Cursor AI</h3>
+              <p>Editores de código tradicionales vs potenciados con IA.</p>
+              <span class="topic-card-link">Ver tema →</span>
+            </article>
+            <article class="topic-card" data-goto="ai-engineer">
+              <div class="topic-card-icon">🤖</div>
+              <h3>¿Qué es un AI Engineer?</h3>
+              <p>Rol, habilidades, flujo de trabajo y aplicaciones.</p>
+              <span class="topic-card-link">Ver tema →</span>
+            </article>
+            <article class="topic-card" data-goto="rol-java-ai">
+              <div class="topic-card-icon">🚀</div>
+              <h3>Rol del Java AI Engineer</h3>
+              <p>Backend, Fullstack, AI Engineering y ruta de 3 niveles.</p>
+              <span class="topic-card-link">Ver tema →</span>
+            </article>
+            <article class="topic-card topic-card--reading" data-goto="lectura">
+              <div class="topic-card-icon">📖</div>
+              <h3>Lectura de Reflexión</h3>
+              <p>Material para leer después de la clase con analogías y contexto profesional.</p>
+              <span class="topic-card-link">Leer ahora →</span>
+            </article>
+          </div>
+
+          <div class="info-banner">
+            <div class="info-banner-icon">💡</div>
+            <div>
+              <strong>¿Cómo usar esta app?</strong>
+              <p>Navega por el menú lateral para explorar cada tema de la clase. Al finalizar, completa la <strong>Lectura de Reflexión</strong> para consolidar lo aprendido.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- JDK -->
+        <section id="jdk" class="section">
+          <div class="section-header">
+            <span class="section-tag">Tema 1</span>
+            <h2>¿Qué es el JDK?</h2>
+            <p>Java Development Kit — el conjunto oficial de herramientas para desarrollar, compilar, depurar y ejecutar aplicaciones Java.</p>
+          </div>
+
+          <figure class="infographic">
+            <img src="assets/images/QUE ES EL JDK.png" alt="Infografía: ¿Qué es el JDK?" loading="lazy">
+            <figcaption>Infografía oficial — Dev Senior Code</figcaption>
+          </figure>
+
+          <div class="content-blocks">
+            <div class="block block--highlight">
+              <h3>Definición</h3>
+              <p>El <strong>JDK (Java Development Kit)</strong> es el kit de desarrollo oficial de Java. Incluye todo lo necesario para crear aplicaciones: compilador, bibliotecas, herramientas de depuración y el entorno de ejecución.</p>
+            </div>
+
+            <div class="block-grid">
+              <div class="mini-card">
+                <span class="mini-card-icon">⚙️</span>
+                <h4>Compilador (javac)</h4>
+                <p>Convierte código Java en bytecode ejecutable.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">▶️</span>
+                <h4>Java Runtime (JRE)</h4>
+                <p>Ejecuta aplicaciones Java en cualquier plataforma.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">🔧</span>
+                <h4>Herramientas</h4>
+                <p>Depuración, javadoc, jar, profiling y más.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">📚</span>
+                <h4>Librerías</h4>
+                <p>Clases y APIs esenciales de Java.</p>
+              </div>
+            </div>
+
+            <div class="comparison-box">
+              <h3>JDK vs JRE — La analogía del conductor</h3>
+              <div class="comparison-columns">
+                <div class="comparison-item comparison-item--jre">
+                  <h4>JRE</h4>
+                  <p class="comparison-analogy">Solo quieres <em>conducir</em> el auto</p>
+                  <ul>
+                    <li>Ejecutar aplicaciones Java</li>
+                    <li>No necesitas crear software</li>
+                    <li>Para usuarios finales</li>
+                  </ul>
+                </div>
+                <div class="comparison-divider">vs</div>
+                <div class="comparison-item comparison-item--jdk">
+                  <h4>JDK</h4>
+                  <p class="comparison-analogy">Quieres <em>fabricar</em> automóviles</p>
+                  <ul>
+                    <li>Crear y compilar aplicaciones</li>
+                    <li>Incluye el JRE + herramientas de desarrollo</li>
+                    <li>Para desarrolladores</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="editions-grid">
+              <div class="edition-card edition-card--se">
+                <span class="edition-badge">Java SE</span>
+                <h4>Standard Edition</h4>
+                <p class="edition-analogy">🚗 El automóvil familiar</p>
+                <p>Edición estándar para aplicaciones de escritorio, herramientas y programas generales. Punto de partida de todo desarrollador Java.</p>
+              </div>
+              <div class="edition-card edition-card--ee">
+                <span class="edition-badge">Java EE</span>
+                <h4>Enterprise Edition</h4>
+                <p class="edition-analogy">🚛 El camión empresarial</p>
+                <p>Para bancos, aerolíneas, hospitales y sistemas que atienden millones de usuarios. Escalable, seguro y de alto rendimiento.</p>
+              </div>
+              <div class="edition-card edition-card--me">
+                <span class="edition-badge">Java ME</span>
+                <h4>Micro Edition</h4>
+                <p class="edition-analogy">🏍️ La motocicleta ligera</p>
+                <p>Para dispositivos con pocos recursos: IoT, sistemas embebidos y equipos pequeños.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TIPOS DE DATOS -->
+        <section id="tipos-datos" class="section">
+          <div class="section-header">
+            <span class="section-tag">Tema 2</span>
+            <h2>Tipos de Datos en Java</h2>
+            <p>Java es un lenguaje fuertemente tipado: cada dato debe declararse con un tipo específico, como cajas de almacenamiento de distintos tamaños.</p>
+          </div>
+
+          <figure class="infographic">
+            <img src="assets/images/TIPOS DE DATOS EN JAVA.png" alt="Infografía: Tipos de Datos en Java" loading="lazy">
+            <figcaption>Infografía oficial — Dev Senior Code</figcaption>
+          </figure>
+
+          <div class="code-example">
+            <div class="code-header"><span>Ejemplo</span><button class="copy-btn" data-copy="types-code">Copiar</button></div>
+            <pre id="types-code"><code>int edad = 25;
+double precio = 19.99;
+char inicial = 'A';
+boolean activo = true;
+String nombre = "Java";</code></pre>
+          </div>
+
+          <div class="content-blocks">
+            <div class="types-hierarchy">
+              <div class="type-category">
+                <h3>Tipos Primitivos <span class="badge">8 tipos</span></h3>
+                <div class="type-table-wrapper">
+                  <table class="type-table">
+                    <thead>
+                      <tr><th>Tipo</th><th>Tamaño</th><th>Descripción</th><th>Analogía</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td><code>byte</code></td><td>1 byte</td><td>Números pequeños (-128 a 127)</td><td>Caja más pequeña</td></tr>
+                      <tr><td><code>short</code></td><td>2 bytes</td><td>Enteros medianos</td><td>Caja un poco más grande</td></tr>
+                      <tr><td><code>int</code></td><td>4 bytes</td><td>Enteros estándar — el más usado</td><td>Caja estándar</td></tr>
+                      <tr><td><code>long</code></td><td>8 bytes</td><td>Enteros muy grandes</td><td>Caja enorme</td></tr>
+                      <tr><td><code>float</code></td><td>4 bytes</td><td>Decimales (menor precisión)</td><td>Caja especial</td></tr>
+                      <tr><td><code>double</code></td><td>8 bytes</td><td>Decimales (mayor precisión)</td><td>Caja especial grande</td></tr>
+                      <tr><td><code>char</code></td><td>2 bytes</td><td>Un solo carácter Unicode</td><td>Caja para una letra</td></tr>
+                      <tr><td><code>boolean</code></td><td>1 bit</td><td>true o false</td><td>Interruptor de luz</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="type-category">
+                <h3>Tipos de Referencia</h3>
+                <div class="ref-types-grid">
+                  <div class="ref-type"><code>String</code><span>Texto inmutable</span></div>
+                  <div class="ref-type"><code>Clases</code><span>Objetos personalizados</span></div>
+                  <div class="ref-type"><code>Arrays</code><span>Colecciones del mismo tipo</span></div>
+                  <div class="ref-type"><code>Interfaces</code><span>Contratos de implementación</span></div>
+                  <div class="ref-type"><code>Enum</code><span>Constantes nombradas</span></div>
+                  <div class="ref-type"><code>Wrapper</code><span>Integer, Double, Boolean...</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="block block--highlight">
+              <h3>Jerarquía de capacidad</h3>
+              <div class="hierarchy-chain">
+                <span>byte</span><span>→</span><span>short</span><span>→</span><span>int</span><span>→</span><span>long</span><span>→</span><span>float</span><span>→</span><span>double</span>
+              </div>
+              <p class="hierarchy-note"><code>boolean</code> no tiene orden de capacidad — solo almacena true o false, como un interruptor encendido/apagado.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- EDITORES -->
+        <section id="editores" class="section">
+          <div class="section-header">
+            <span class="section-tag">Tema 3</span>
+            <h2>Visual Studio Code vs Cursor AI</h2>
+            <p>Dos cocinas: una tradicional donde cocinas manualmente, y otra inteligente con un asistente que te ayuda en cada paso.</p>
+          </div>
+
+          <figure class="infographic">
+            <img src="assets/images/VISUAL STUIDO CODE VS CURSOR AI.png" alt="Infografía: VS Code vs Cursor AI" loading="lazy">
+            <figcaption>Infografía oficial — Dev Senior Code</figcaption>
+          </figure>
+
+          <div class="content-blocks">
+            <div class="editors-comparison">
+              <div class="editor-card editor-card--vscode">
+                <div class="editor-header">
+                  <span class="editor-logo">📝</span>
+                  <div>
+                    <h3>Visual Studio Code</h3>
+                    <p>La navaja suiza para desarrolladores</p>
+                  </div>
+                </div>
+                <p class="editor-analogy">🍳 Cocina tradicional — todos los utensilios, pero haces casi todo manualmente.</p>
+                <ul class="feature-list">
+                  <li>Editor ligero, rápido y extensible</li>
+                  <li>Autocompletado inteligente</li>
+                  <li>Depuración avanzada e integración Git</li>
+                  <li>Miles de extensiones disponibles</li>
+                  <li>100% personalizable y gratuito</li>
+                </ul>
+                <div class="editor-ideal">
+                  <strong>Ideal para:</strong> Control total, equipos con muchas tecnologías, proyectos que requieren extensiones específicas.
+                </div>
+              </div>
+
+              <div class="editor-card editor-card--cursor">
+                <div class="editor-header">
+                  <span class="editor-logo">✨</span>
+                  <div>
+                    <h3>Cursor AI</h3>
+                    <p>El copiloto inteligente</p>
+                  </div>
+                </div>
+                <p class="editor-analogy">🤖 Cocina inteligente — un asistente te recomienda, corrige errores y acelera tu trabajo.</p>
+                <ul class="feature-list">
+                  <li>Basado en VS Code + IA integrada</li>
+                  <li>Chat con tu código (AI Chat)</li>
+                  <li>Generación y refactorización con IA</li>
+                  <li>Edición multi-archivo contextual</li>
+                  <li>Detección y corrección de errores</li>
+                </ul>
+                <div class="editor-ideal">
+                  <strong>Ideal para:</strong> Máxima productividad, automatización, proyectos complejos y generación rápida de código.
+                </div>
+              </div>
+            </div>
+
+            <div class="quick-table-wrapper">
+              <h3>Comparación rápida</h3>
+              <table class="quick-table">
+                <thead>
+                  <tr><th>Característica</th><th>VS Code</th><th>Cursor AI</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>IA integrada</td><td>Limitada</td><td class="highlight-cell">Muy avanzada</td></tr>
+                  <tr><td>Chat con código</td><td>❌</td><td class="highlight-cell">✅</td></tr>
+                  <tr><td>Generación de código</td><td>❌</td><td class="highlight-cell">✅</td></tr>
+                  <tr><td>Personalización</td><td class="highlight-cell">Muy alta</td><td>Alta</td></tr>
+                  <tr><td>Costo</td><td class="highlight-cell">Gratis</td><td>Freemium</td></tr>
+                  <tr><td>Mejor para</td><td>Control y flexibilidad</td><td>Productividad con IA</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- AI ENGINEER -->
+        <section id="ai-engineer" class="section">
+          <div class="section-header">
+            <span class="section-tag">Tema 4</span>
+            <h2>¿Qué es un AI Engineer?</h2>
+            <p>Un profesional que diseña, desarrolla e implementa soluciones basadas en Inteligencia Artificial para resolver problemas reales.</p>
+          </div>
+
+          <figure class="infographic">
+            <img src="assets/images/QUE ES UN AI ENGINEER.png" alt="Infografía: ¿Qué es un AI Engineer?" loading="lazy">
+            <figcaption>Infografía oficial — Dev Senior Code</figcaption>
+          </figure>
+
+          <div class="content-blocks">
+            <div class="ai-definition">
+              <blockquote>
+                "Un AI Engineer es un profesional que diseña, desarrolla e implementa soluciones basadas en Inteligencia Artificial para resolver problemas reales y generar valor."
+              </blockquote>
+            </div>
+
+            <div class="block-grid">
+              <div class="mini-card">
+                <span class="mini-card-icon">💡</span>
+                <h4>Diseña soluciones</h4>
+                <p>Crea soluciones de IA que resuelven necesidades del negocio.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">🧩</span>
+                <h4>Integra modelos</h4>
+                <p>Conecta modelos de IA en productos, apps y procesos.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">📊</span>
+                <h4>Trabaja con datos</h4>
+                <p>Entrena, evalúa y mejora modelos con datos reales.</p>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-icon">⚙️</span>
+                <h4>Despliega sistemas</h4>
+                <p>Construye, prueba y despliega sistemas inteligentes escalables.</p>
+              </div>
+            </div>
+
+            <div class="workflow">
+              <h3>¿Cómo trabaja un AI Engineer?</h3>
+              <div class="workflow-steps">
+                <div class="workflow-step"><span class="step-num">1</span><div><strong>Comprende el problema</strong><p>Analiza la necesidad y define objetivos.</p></div></div>
+                <div class="workflow-step"><span class="step-num">2</span><div><strong>Prepara los datos</strong><p>Recopila, limpia y organiza información.</p></div></div>
+                <div class="workflow-step"><span class="step-num">3</span><div><strong>Diseña la solución</strong><p>Selecciona modelos y define estrategia.</p></div></div>
+                <div class="workflow-step"><span class="step-num">4</span><div><strong>Desarrolla</strong><p>Construye, entrena e integra la solución.</p></div></div>
+                <div class="workflow-step"><span class="step-num">5</span><div><strong>Despliega</strong><p>Lleva la solución a producción.</p></div></div>
+                <div class="workflow-step"><span class="step-num">6</span><div><strong>Monitorea y mejora</strong><p>Evalúa resultados y optimiza continuamente.</p></div></div>
+              </div>
+            </div>
+
+            <div class="applications">
+              <h3>¿Dónde se aplica?</h3>
+              <div class="tags-cloud">
+                <span>Automatización de procesos</span>
+                <span>Asistentes inteligentes</span>
+                <span>Análisis predictivo</span>
+                <span>Recomendaciones personalizadas</span>
+                <span>Detección de fraudes</span>
+                <span>Generación de contenido</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROL JAVA AI -->
+        <section id="rol-java-ai" class="section">
+          <div class="section-header">
+            <span class="section-tag">Tema 5</span>
+            <h2>Rol del Java AI Engineer</h2>
+            <p>Combina Backend Engineering, Full Stack Development y AI Engineering para construir productos inteligentes listos para el mercado.</p>
+          </div>
+
+          <figure class="infographic">
+            <img src="assets/images/ROL DEL JAVA AI ENGINEER.png" alt="Infografía: Rol del Java AI Engineer" loading="lazy">
+            <figcaption>Infografía oficial — Dev Senior Code · Florida Global University</figcaption>
+          </figure>
+
+          <div class="content-blocks">
+            <div class="formula-box">
+              <div class="formula-item">Backend sólido con Java</div>
+              <span class="formula-op">+</span>
+              <div class="formula-item">Fullstack moderno con Angular</div>
+              <span class="formula-op">+</span>
+              <div class="formula-item">AI Engineering aplicado</div>
+              <span class="formula-op">=</span>
+              <div class="formula-result">Productos inteligentes listos para el mercado</div>
+            </div>
+
+            <div class="pillars-grid">
+              <div class="pillar-card">
+                <span class="pillar-num">1</span>
+                <h4>Backend Engineering</h4>
+                <p>Java, Spring Boot, REST APIs, JWT, Docker, arquitectura backend.</p>
+              </div>
+              <div class="pillar-card">
+                <span class="pillar-num">2</span>
+                <h4>Bases de Datos</h4>
+                <p>MySQL, PostgreSQL, modelado de datos, SQL y persistencia.</p>
+              </div>
+              <div class="pillar-card">
+                <span class="pillar-num">3</span>
+                <h4>Fullstack Development</h4>
+                <p>Angular, TypeScript, HTML/CSS, dashboards, UX/UI moderno.</p>
+              </div>
+              <div class="pillar-card">
+                <span class="pillar-num">4</span>
+                <h4>AI Engineering</h4>
+                <p>OpenAI, Claude, Prompt Engineering, LLMs, automatización inteligente.</p>
+              </div>
+              <div class="pillar-card">
+                <span class="pillar-num">5</span>
+                <h4>Sistemas Inteligentes</h4>
+                <p>RAG, Embeddings, Vector DBs, AI Agents, orquestación de procesos.</p>
+              </div>
+              <div class="pillar-card">
+                <span class="pillar-num">6</span>
+                <h4>Herramientas Profesionales</h4>
+                <p>Git, GitHub, Cursor AI, Swagger, Postman, JUnit, IntelliJ.</p>
+              </div>
+            </div>
+
+            <div class="levels-path">
+              <h3>Ruta progresiva de 3 niveles</h3>
+              <div class="levels">
+                <div class="level-card">
+                  <span class="level-badge">Nivel 1</span>
+                  <h4>Java AI Backend Developer</h4>
+                  <p>Fundamentos sólidos de backend con Java y herramientas modernas.</p>
+                </div>
+                <div class="level-arrow">→</div>
+                <div class="level-card">
+                  <span class="level-badge">Nivel 2</span>
+                  <h4>Java AI Fullstack Developer</h4>
+                  <p>Desarrollo Fullstack profesional con Angular y aplicaciones completas.</p>
+                </div>
+                <div class="level-arrow">→</div>
+                <div class="level-card level-card--final">
+                  <span class="level-badge">Nivel 3</span>
+                  <h4>AI Engineer Developer</h4>
+                  <p>AI Engineering aplicado a productos reales y sistemas inteligentes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LECTURA -->
+        <section id="lectura" class="section">
+          <div class="section-header section-header--reading">
+            <span class="section-tag section-tag--reading">Después de la clase</span>
+            <h2>Lectura de Reflexión y Contexto Profesional</h2>
+            <p>Del JDK a la Inteligencia Artificial: El camino para convertirse en un Java AI Engineer</p>
+          </div>
+
+          <div class="reading-meta">
+            <span>📖 Lectura obligatoria post-clase</span>
+            <span>⏱ ~15 min de lectura</span>
+          </div>
+
+          <article class="reading-content" id="readingContent">
+            <!-- Content injected by JS -->
+          </article>
+
+          <div class="reading-complete">
+            <button class="btn btn-primary btn-large" id="markCompleteBtn">
+              ✓ Marcar lectura como completada
+            </button>
+            <p class="reading-complete-msg" id="completeMsg"></p>
+          </div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <p>Dev Senior Code · Java AI Engineer · Clase 1</p>
+        <p class="footer-sub">Florida Global University</p>
+      </footer>
+    </main>
+
+    <nav class="section-nav" id="sectionNav">
+      <button class="section-nav-btn" id="prevBtn" disabled>← Anterior</button>
+      <button class="section-nav-btn section-nav-btn--next" id="nextBtn">Siguiente →</button>
+    </nav>
+  </div>
+
+  <script src="js/reading.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
