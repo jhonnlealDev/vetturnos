@@ -1,0 +1,14 @@
+git init
+git add
+git commit - m "carga información de repaso"
+git status
+
+GitHub
+…or push an existing repository from the command line
+git remote add origin https://github.com/jhonnlealDev/DS_Modulo_clases.git
+git branch -M main
+git push -u origin main
+
+git push
+git
+
