@@ -11,9 +11,9 @@ public class App {
         System.out.println("-------------------------------------------------");
 
         Libro miLibro = new Libro();
-        miLibro.titulo = "1984";
-        miLibro.autor = "George Orwell";
-        miLibro.año = 1948;
+        miLibro.setTitulo("1984");
+        miLibro.setAutor("George Orwell");
+        miLibro.setAño(1948);
         miLibro.mostrarInformacion();
     }
 }
