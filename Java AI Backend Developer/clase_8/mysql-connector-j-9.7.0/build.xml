@@ -191,7 +191,7 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
     <property name="com.mysql.cj.extra.libs" value="lib" />
 
     <!-- The JDK used to compile the code. -->
-    <property name="com.mysql.cj.build.jdk" value="/usr/lib/jvm/jdk1.8" />
+    <property name="com.mysql.cj.build.jdk" value="C:\Program Files\Eclipse Adoptium\jdk-25.0.2.10-hotspot" />
     <property name="com.mysql.cj.build.addDebugInfo" value="yes" />
     <property name="com.mysql.cj.build.noCleanBetweenCompiles" value="no" />
     <property name="com.mysql.cj.build.failOnWarnings" value="no" />
@@ -351,12 +351,12 @@ See also com.mysql.cj.conf.PropertyDefinitions.SYSP_* variables for other test o
             <arg value="-version" />
         </exec>
 
-        <fail message="Java 8 is required for compiling the source code. Set the path to the JDK home with the property 'com.mysql.cj.build.jdk'. Default: '/usr/lib/jvm/jdk1.8').">
+        <fail message="A JDK 17 or newer is required for compiling the source code. Set the path to the JDK home with the property 'com.mysql.cj.build.jdk'.">
             <condition>
                 <not>
                     <and>
                         <equals arg1="${com.mysql.cj.build.jdk.exitStatus}" arg2="0" />
-                        <contains string="${com.mysql.cj.build.jdk.version}" substring="version &quot;1.8" casesensitive="true" />
+                        <matches string="${com.mysql.cj.build.jdk.version}" pattern="version \"(1\.(8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)|2[0-9]|3[0-9])" casesensitive="true" />
                     </and>
                 </not>
             </condition>
