@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva Paso a Paso: Creación de API REST con Spring Boot, JPA, MySQL y JWT</title>
+    <style>
+        :root {
+            --bg-primary: #0b1120;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --bg-code: #070b14;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --border-color: #334155;
+            --border-highlight: #475569;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0b1120 0%, #171d33 50%, #0b1120 100%);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+        }
+
+        .header-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+        }
+
+        .brand-icon {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+        }
+
+        .brand-text h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .progress-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-secondary);
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar-container {
+            width: 130px;
+            height: 8px;
+            background: #070b14;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-green));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 40px;
+        }
+
+        .app-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 330px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static !important;
+                max-height: none !important;
+            }
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 5.5rem;
+            max-height: calc(100vh - 7rem);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding-right: 0.5rem;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .sidebar-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-btn:hover, .tag-btn.active {
+            background: var(--accent-primary);
+            color: #0b1120;
+            border-color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .nav-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-primary);
+            border-color: rgba(56, 189, 248, 0.3);
+            font-weight: 600;
+        }
+
+        .nav-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .nav-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+        }
+
+        .nav-item.active .nav-badge {
+            background: var(--accent-primary);
+            color: #0b1120;
+        }
+
+        .nav-check {
+            color: var(--accent-green);
+            font-size: 0.95rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .nav-check.completed {
+            opacity: 1;
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(11, 17, 32, 0.98) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.25;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+        }
+
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-box {
+            background: rgba(11, 17, 32, 0.75);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .feature-box .icon {
+            font-size: 1.3rem;
+            color: var(--accent-primary);
+        }
+
+        .feature-box .title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .feature-box .desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .arch-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .arch-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .arch-node {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1rem 0.85rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .arch-node:hover, .arch-node.selected {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .arch-node-step {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .arch-node-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .arch-node-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .arch-node-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.68rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent-primary);
+        }
+
+        .arch-detail-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-top: 1rem;
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .arch-detail-box.show {
+            display: block;
+        }
+
+        .step-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .step-card:hover {
+            border-color: var(--border-highlight);
+        }
+
+        .step-header {
+            padding: 1.5rem 1.75rem;
+            background: rgba(11, 17, 32, 0.5);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .step-header-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .step-checkbox {
+            margin-top: 0.35rem;
+            width: 22px;
+            height: 22px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+
+        .step-badge {
+            background: var(--accent-primary);
+            color: #0b1120;
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .step-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .step-meta {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .meta-tag {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .step-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.2s;
+        }
+
+        .toggle-btn.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .step-body {
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .step-body.hidden {
+            display: none;
+        }
+
+        .callout {
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            font-size: 0.88rem;
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+        }
+
+        .callout-why {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #bae6fd;
+        }
+
+        .callout-tip {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: #a7f3d0;
+        }
+
+        .callout-warning {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: #fde68a;
+        }
+
+        .callout-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .callout-content strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #111728;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-tabs {
+            display: flex;
+            gap: 0.3rem;
+            overflow-x: auto;
+        }
+
+        .code-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .code-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .code-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-primary);
+            color: #0b1120;
+            border-color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: #0b1120;
+            border-color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        pre {
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: #e2e8f0;
+        }
+
+        .code-content {
+            display: none;
+        }
+
+        .code-content.active {
+            display: block;
+        }
+
+        .api-simulator {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 850px) {
+            .sim-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sim-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sim-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .endpoint-selector {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .method-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+        .method-get { background: rgba(56, 189, 248, 0.2); color: var(--accent-primary); }
+        .method-post { background: rgba(52, 211, 153, 0.2); color: var(--accent-green); }
+
+        .btn-run {
+            background: linear-gradient(135deg, var(--accent-primary), #0284c7);
+            color: #0b1120;
+            border: none;
+            font-weight: 700;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-run:hover {
+            opacity: 0.9;
+        }
+
+        .faq-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 1.25rem 1.25rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4rem;
+            background: #070b14;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">⚡</div>
+                <div class="brand-text">
+                    <h1>Spring Boot 3 / 4 & JWT — Guía Interactiva Paso a Paso</h1>
+                    <p>Construcción Modular, Segura y Documentada de una API REST</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="progress-box">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Progreso:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="overallProgressBar"></div>
+                    </div>
+                    <span class="progress-label" id="progressPercentage">0%</span>
+                </div>
+                <button class="tag-btn" onclick="resetProgress()" title="Reiniciar avance">🔄 Reiniciar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span>Buscador Rápido</span>
+                </div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar clase, anotación, paso..." onkeyup="filterSteps()">
+                </div>
+                <div class="filter-tags">
+                    <button class="tag-btn active" onclick="filterByTag('all', this)">Todos</button>
+                    <button class="tag-btn" onclick="filterByTag('config', this)">Config</button>
+                    <button class="tag-btn" onclick="filterByTag('model', this)">Model/DTO</button>
+                    <button class="tag-btn" onclick="filterByTag('security', this)">Seguridad</button>
+                    <button class="tag-btn" onclick="filterByTag('api', this)">Endpoints</button>
+                </div>
+
+                <div class="sidebar-title" style="margin-top: 1rem;">
+                    <span>Pasos de la Guía</span>
+                    <span id="stepsCount" style="font-size: 0.75rem; color: var(--accent-primary);">0/11</span>
+                </div>
+                <ul class="nav-list" id="navList">
+                    <li><a href="#paso-0" class="nav-item" data-tag="config"><span class="nav-item-left"><span class="nav-badge">00</span> Arquitectura & Setup</span><span class="nav-check" id="check-nav-0">✓</span></a></li>
+                    <li><a href="#paso-1" class="nav-item" data-tag="config"><span class="nav-item-left"><span class="nav-badge">01</span> pom.xml & Dependencias</span><span class="nav-check" id="check-nav-1">✓</span></a></li>
+                    <li><a href="#paso-2" class="nav-item" data-tag="config"><span class="nav-item-left"><span class="nav-badge">02</span> Base de Datos & Properties</span><span class="nav-check" id="check-nav-2">✓</span></a></li>
+                    <li><a href="#paso-3" class="nav-item" data-tag="model"><span class="nav-item-left"><span class="nav-badge">03</span> Entidades JPA & Modelos</span><span class="nav-check" id="check-nav-3">✓</span></a></li>
+                    <li><a href="#paso-4" class="nav-item" data-tag="model"><span class="nav-item-left"><span class="nav-badge">04</span> Repositorios (Data JPA)</span><span class="nav-check" id="check-nav-4">✓</span></a></li>
+                    <li><a href="#paso-5" class="nav-item" data-tag="model"><span class="nav-item-left"><span class="nav-badge">05</span> Capa DTO (Data Transfer)</span><span class="nav-check" id="check-nav-5">✓</span></a></li>
+                    <li><a href="#paso-6" class="nav-item" data-tag="security"><span class="nav-item-left"><span class="nav-badge">06</span> Seguridad JWT Completa</span><span class="nav-check" id="check-nav-6">✓</span></a></li>
+                    <li><a href="#paso-7" class="nav-item" data-tag="api"><span class="nav-item-left"><span class="nav-badge">07</span> Servicios & Lógica</span><span class="nav-check" id="check-nav-7">✓</span></a></li>
+                    <li><a href="#paso-8" class="nav-item" data-tag="api"><span class="nav-item-left"><span class="nav-badge">08</span> Controladores REST</span><span class="nav-check" id="check-nav-8">✓</span></a></li>
+                    <li><a href="#paso-9" class="nav-item" data-tag="config"><span class="nav-item-left"><span class="nav-badge">09</span> Swagger OpenAPI & Docs</span><span class="nav-check" id="check-nav-9">✓</span></a></li>
+                    <li><a href="#paso-10" class="nav-item" data-tag="api"><span class="nav-item-left"><span class="nav-badge">10</span> Pruebas & Simulador</span><span class="nav-check" id="check-nav-10">✓</span></a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Hero -->
+            <section class="hero-banner">
+                <h2 class="hero-title">Guía de Construcción: API REST de Comercio con Spring Boot y JWT</h2>
+                <p class="hero-subtitle">
+                    Esta guía desglosa en un orden pedagógico y estrictamente lógico cada componente del proyecto base. Aprenderás no solo <em>qué</em> escribir, sino <em>por qué</em> se construye en este orden exacto para evitar errores de dependencias cíclicas, referencias nulas o configuraciones bloqueadas.
+                </p>
+                <div class="hero-features">
+                    <div class="feature-box">
+                        <span class="icon">🏗️</span>
+                        <span class="title">Arquitectura por Capas</span>
+                        <span class="desc">Controller → Service → Repository → Model / DTO</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">🔐</span>
+                        <span class="title">Seguridad Stateless</span>
+                        <span class="desc">Spring Security 6+ con JJWT 0.13.0 y BCrypt</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">🗄️</span>
+                        <span class="title">Persistencia Relacional</span>
+                        <span class="desc">Hibernate JPA con MySQL (1:N y N:1)</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">📑</span>
+                        <span class="title">OpenAPI 3 / Swagger</span>
+                        <span class="desc">Documentación viva con autenticación Bearer</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Architecture Explorer -->
+            <section class="arch-section">
+                <div class="section-header">
+                    <div>
+                        <h3 class="section-title">🧭 Mapa de Arquitectura y Flujo de Peticiones</h3>
+                        <p class="section-subtitle">Haz clic en cada capa para ver su función exacta en el ciclo de vida de la petición HTTP</p>
+                    </div>
+                </div>
+                <div class="arch-diagram">
+                    <div class="arch-node" onclick="showArchDetail('client')">
+                        <div class="arch-node-step">Paso 10</div>
+                        <div class="arch-node-name">Cliente HTTP</div>
+                        <div class="arch-node-desc">Postman / Swagger / Frontend</div>
+                        <span class="arch-node-badge">Petición JSON + Header Auth</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('security')">
+                        <div class="arch-node-step">Paso 06</div>
+                        <div class="arch-node-name">JwtAuthFilter</div>
+                        <div class="arch-node-desc">Filtro OncePerRequest</div>
+                        <span class="arch-node-badge">Valida Token & Context</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('controller')">
+                        <div class="arch-node-step">Paso 08</div>
+                        <div class="arch-node-name">Controller</div>
+                        <div class="arch-node-desc">@RestController & Rutas</div>
+                        <span class="arch-node-badge">Recibe RequestBody / Retorna DTO</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('service')">
+                        <div class="arch-node-step">Paso 07</div>
+                        <div class="arch-node-name">Service</div>
+                        <div class="arch-node-desc">Lógica de Negocio</div>
+                        <span class="arch-node-badge">Orquesta entidades & Auth</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('repository')">
+                        <div class="arch-node-step">Paso 04</div>
+                        <div class="arch-node-name">Repository</div>
+                        <div class="arch-node-desc">Spring Data JPA</div>
+                        <span class="arch-node-badge">save / findAll / findByEmail</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('db')">
+                        <div class="arch-node-step">Paso 02</div>
+                        <div class="arch-node-name">MySQL DB</div>
+                        <div class="arch-node-desc">Tablas Relacionales</div>
+                        <span class="arch-node-badge">tiendabd (InnoDB)</span>
+                    </div>
+                </div>
+                <div class="arch-detail-box" id="archDetailBox">
+                    <h4 id="archDetailTitle" style="color: var(--accent-primary); margin-bottom: 0.4rem;">Detalles de la Capa</h4>
+                    <p id="archDetailText" style="font-size: 0.88rem; color: var(--text-secondary);"></p>
+                </div>
+            </section>
+
+            <!-- PASO 0 -->
+            <section class="step-card" id="paso-0" data-tags="config">
+                <div class="step-header" onclick="toggleStepBody(0)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-0" onclick="event.stopPropagation(); toggleStepCheck(0)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 00</span>
+                            <h3 class="step-title">Preparación del Entorno y Creación con Spring Initializr</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 10 min</span>
+                                <span class="meta-tag">🎯 Requisitos y Estructura</span>
+                                <span class="meta-tag">📦 Java 17+, Maven, MySQL</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-0">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-0">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué empezar aquí?</strong>
+                            Configurar las versiones correctas de JDK, Maven y la estructura de carpetas desde el inicio previene incompatibilidades entre Spring Security, Jakarta Persistence y librerías JWT.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #fff;">1. Generación en Spring Initializr (start.spring.io)</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                            Configura el proyecto con los siguientes parámetros exactos:
+                        </p>
+                        <ul style="list-style-position: inside; font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            <li><strong>Project:</strong> Maven</li>
+                            <li><strong>Language:</strong> Java</li>
+                            <li><strong>Spring Boot:</strong> 3.x / 4.x</li>
+                            <li><strong>Group:</strong> <code>devseniorjl</code></li>
+                            <li><strong>Artifact:</strong> <code>demo</code></li>
+                            <li><strong>Packaging:</strong> Jar</li>
+                            <li><strong>Java:</strong> 17 (o superior)</li>
+                            <li><strong>Dependencias iniciales:</strong> Spring Web, Spring Data JPA, MySQL Driver, Spring Security, Spring Boot DevTools.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #fff;">2. Árbol de Paquetes Recomendado</h4>
+                        <div class="code-container">
+                            <pre><code>src/main/java/devseniorjl/demo/
+├── DemoApplication.java       # Clase principal con @SpringBootApplication
+├── config/                   # OpenAPI y configuraciones generales
+├── controller/               # Endpoints REST (Auth, Producto, Marca, Categoria)
+├── dto/                      # Objetos de transferencia de datos
+├── model/                    # Entidades JPA (Usuario, Rol, Producto, etc.)
+├── repository/               # Interfaces Spring Data JPA
+├── security/                 # Filtros JWT, JwtService, SecurityConfig
+└── service/                  # Lógica de negocio</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #fff;">3. Clase Principal de Arranque (DemoApplication.java)</h4>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <div class="code-tabs">
+                                    <button class="code-tab active">DemoApplication.java</button>
+                                </div>
+                                <div class="code-actions">
+                                    <button class="copy-btn" onclick="copyCode('code-demo-app')">📋 Copiar</button>
+                                </div>
+                            </div>
+                            <div class="code-content active" id="code-demo-app">
+                                <pre><code>package devseniorjl.demo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class DemoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
+
+}
+</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 1 -->
+            <section class="step-card" id="paso-1" data-tags="config">
+                <div class="step-header" onclick="toggleStepBody(1)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-1" onclick="event.stopPropagation(); toggleStepCheck(1)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 01</span>
+                            <h3 class="step-title">Configuración de Dependencias en <code>pom.xml</code></h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 5 min</span>
+                                <span class="meta-tag">🎯 JJWT 0.13.0 & SpringDoc OpenAPI</span>
+                                <span class="meta-tag">📄 pom.xml</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-1">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-1">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué este paso?</strong>
+                            Spring Boot no incluye JJWT ni Swagger UI por defecto. Necesitamos añadir las dependencias <code>jjwt-api</code>, <code>jjwt-impl</code>, <code>jjwt-jackson</code> y <code>springdoc-openapi</code> para autenticación y documentación.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active">pom.xml</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCode('code-pom')">📋 Copiar XML</button>
+                            </div>
+                        </div>
+                        <div class="code-content active" id="code-pom">
+                            <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;parent&gt;
+		&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+		&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+		&lt;version&gt;4.1.0&lt;/version&gt;
+		&lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+	&lt;/parent&gt;
+	&lt;groupId&gt;devseniorjl&lt;/groupId&gt;
+	&lt;artifactId&gt;demo&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;name/&gt;
+	&lt;description/&gt;
+	&lt;url/&gt;
+	&lt;licenses&gt;
+		&lt;license/&gt;
+	&lt;/licenses&gt;
+	&lt;developers&gt;
+		&lt;developer/&gt;
+	&lt;/developers&gt;
+	&lt;scm&gt;
+		&lt;connection/&gt;
+		&lt;developerConnection/&gt;
+		&lt;tag/&gt;
+		&lt;url/&gt;
+	&lt;/scm&gt;
+	&lt;properties&gt;
+		&lt;java.version&gt;17&lt;/java.version&gt;
+	&lt;/properties&gt;
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-webmvc&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+			&lt;optional&gt;true&lt;/optional&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-webmvc-test&lt;/artifactId&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.mysql&lt;/groupId&gt;
+			&lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+			&lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+			&lt;version&gt;0.13.0&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+			&lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+			&lt;version&gt;0.13.0&lt;/version&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+			&lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+			&lt;version&gt;0.13.0&lt;/version&gt;
+			&lt;scope&gt;runtime&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+			&lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+			&lt;version&gt;3.1.0&lt;/version&gt;
+		&lt;/dependency&gt;
+
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+				&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+
+&lt;/project&gt;
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 2 -->
+            <section class="step-card" id="paso-2" data-tags="config">
+                <div class="step-header" onclick="toggleStepBody(2)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-2" onclick="event.stopPropagation(); toggleStepCheck(2)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 02</span>
+                            <h3 class="step-title">Configuración de Base de Datos y <code>application.properties</code></h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 5 min</span>
+                                <span class="meta-tag">🎯 JDBC & Hibernate DDL</span>
+                                <span class="meta-tag">📄 application.properties</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-2">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-2">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Creación previa de la Base de Datos:</strong>
+                            Antes de iniciar Spring Boot, asegúrate de crear la base de datos vacía en MySQL Workbench o phpMyAdmin:<br>
+                            <code>CREATE DATABASE tiendabd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</code>
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active">application.properties</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCode('code-props')">📋 Copiar Properties</button>
+                            </div>
+                        </div>
+                        <div class="code-content active" id="code-props">
+                            <pre><code>spring.application.name=demo
+
+spring.datasource.url=jdbc:mysql://localhost:3306/tiendabd
+spring.datasource.username=root
+spring.datasource.password=Alpine123456
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="callout callout-warning">
+                        <span class="callout-icon">⚠️</span>
+                        <div class="callout-content">
+                            <strong>Nota sobre <code>ddl-auto=update</code>:</strong>
+                            Crea o actualiza las tablas automáticamente al levantar la aplicación según las entidades de Java. En producción se recomienda cambiarlo a <code>validate</code> o usar migraciones controladas (Flyway / Liquibase).
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 3 -->
+            <section class="step-card" id="paso-3" data-tags="model">
+                <div class="step-header" onclick="toggleStepBody(3)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-3" onclick="event.stopPropagation(); toggleStepCheck(3)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 03</span>
+                            <h3 class="step-title">Capa de Modelo y Entidades JPA (<code>model</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Entidades, Relaciones 1:N y Enums</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.model</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-3">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-3">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué definir las entidades antes de los repositorios y servicios?</strong>
+                            Las entidades son el núcleo del dominio. Definen el esquema de datos, las llaves primarias y las relaciones relacionales (un Producto pertenece a una Marca y a una Categoría; un Usuario tiene un Rol).
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-rol')">Rol.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-usuario')">Usuario.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-categoria')">Categoria.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-marca')">Marca.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-producto')">Producto.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-rol">
+                            <pre><code>package devseniorjl.demo.model;
+
+public enum Rol {
+    USER,
+    ADMIN
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-usuario">
+                            <pre><code>package devseniorjl.demo.model;
+
+import jakarta.persistence.*;
+
+
+@Entity
+@Table(name = &quot;usuarios&quot;)
+public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Rol rol;
+
+    public Usuario() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-categoria">
+                            <pre><code>package devseniorjl.demo.model;
+
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name=&quot;categorias&quot;)
+public class Categoria {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    @OneToMany(mappedBy = &quot;categoria&quot;)
+    private List&lt;Producto&gt; productos = new ArrayList&lt;&gt;();
+
+    public Categoria() {}
+
+    public Categoria(Long id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public List&lt;Producto&gt; getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List&lt;Producto&gt; productos) {
+        this.productos = productos;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-marca">
+                            <pre><code>package devseniorjl.demo.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table; // Importación necesaria
+
+@Entity
+@Table(name = &quot;marcas&quot;) // Corregido: @Table en lugar de @table
+public class Marca {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+
+    public Marca() {}
+
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-producto">
+                            <pre><code>package devseniorjl.demo.model;
+
+import jakarta.persistence.*;
+import jakarta.persistence.GenerationType;
+
+
+@Entity
+@Table(name=&quot;productos&quot;)
+public class Producto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    private String descripcion;
+    private double precio;
+    private int stock;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;categoria_id&quot;)
+    private Categoria categoria;
+
+    @ManyToOne
+    @JoinColumn(name = &quot;marca_id&quot;)
+    private Marca marca;
+
+    public Producto() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+    }
+// getters y setters de todos los campos
+}
+
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 4 -->
+            <section class="step-card" id="paso-4" data-tags="model">
+                <div class="step-header" onclick="toggleStepBody(4)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-4" onclick="event.stopPropagation(); toggleStepCheck(4)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 04</span>
+                            <h3 class="step-title">Capa de Repositorios Spring Data JPA (<code>repository</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 10 min</span>
+                                <span class="meta-tag">🎯 Métodos derivados: findByEmail, findByCategoriaId</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.repository</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-4">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-4">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué solo interfaces?</strong>
+                            Al extender de <code>JpaRepository&lt;Entidad, ID&gt;</code>, Spring Data genera en tiempo de ejecución las consultas SQL CRUD (<code>save</code>, <code>findAll</code>, <code>findById</code>, <code>deleteById</code>) y métodos derivados por convención de nombres.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-repo-usuario')">UsuarioRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-prod')">ProductoRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-cat')">CategoriaRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-marca')">MarcaRepository.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-repo-usuario">
+                            <pre><code>package devseniorjl.demo.repository;
+
+import devseniorjl.demo.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt; {
+    Optional&lt;Usuario&gt; findByEmail(String email);
+    boolean existsByEmail(String email);
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-repo-prod">
+                            <pre><code>package devseniorjl.demo.repository;
+
+import devseniorjl.demo.model.Producto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface ProductoRepository extends JpaRepository&lt;Producto, Long&gt; {
+    List&lt;Producto&gt; findByCategoriaId(Long categoriaId);
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-repo-cat">
+                            <pre><code>package devseniorjl.demo.repository;
+
+import devseniorjl.demo.model.Categoria;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoriaRepository extends JpaRepository&lt;Categoria, Long&gt; {
+    // Spring Data JPA genera automáticamente toda la implementación
+}</code></pre>
+                        </div>
+                        <div class="code-content" id="code-repo-marca">
+                            <pre><code>package devseniorjl.demo.repository;
+
+import devseniorjl.demo.model.Marca;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MarcaRepository extends JpaRepository&lt;Marca, Long&gt; {
+    // Spring Data JPA genera automáticamente toda la implementación
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 5 -->
+            <section class="step-card" id="paso-5" data-tags="model">
+                <div class="step-header" onclick="toggleStepBody(5)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-5" onclick="event.stopPropagation(); toggleStepCheck(5)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 05</span>
+                            <h3 class="step-title">Capa de DTOs - Evitando Recursión Infinita y Ocultando Datos Sensibles (<code>dto</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 10 min</span>
+                                <span class="meta-tag">🎯 LoginRequest, RegistroRequest, AuthResponse, ProductoDTO</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.dto</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-5">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-5">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué usar ProductoDTO en lugar de devolver la entidad Producto?</strong>
+                            Si devuelves directamente <code>Producto</code>, Jackson intentará serializar la <code>Categoria</code>, la cual tiene una lista de <code>Producto</code>s, provocando un error <strong>StackOverflowError por recursión infinita bidireccional</strong>. Además, un DTO te permite aplanar el JSON y no exponer contraseñas ni campos internos.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-dto-prod')">ProductoDTO.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-auth-res')">AuthResponse.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-login')">LoginRequest.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-reg')">RegistroRequest.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-cat')">CategoriaDTO.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-marca')">MarcaDTO.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-dto-prod">
+                            <pre><code>package devseniorjl.demo.dto;
+import devseniorjl.demo.model.Producto;
+
+public class ProductoDTO {
+    private Long id;
+    private String nombre;
+    private double precio;
+    private int stock;
+    private String categoria;
+    private String marca;
+
+    public ProductoDTO(Producto producto) {
+        this.id = producto.getId();
+        this.nombre = producto.getNombre();
+        this.precio = producto.getPrecio();
+        this.stock = producto.getStock();
+        this.categoria = producto.getCategoria() != null
+                ? producto.getCategoria().getNombre()
+                : null;
+        this.marca = producto.getMarca() != null
+                ? producto.getMarca().getNombre()
+                : null;
+    }
+
+    // Getters de todos los campos
+    public Long getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-dto-auth-res">
+                            <pre><code>package devseniorjl.demo.dto;
+
+public class AuthResponse {
+    private String token;
+
+    public AuthResponse(String token) {
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-dto-login">
+                            <pre><code>package devseniorjl.demo.dto;
+
+public class LoginRequest {
+    private String email;
+    private String password;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-dto-reg">
+                            <pre><code>package devseniorjl.demo.dto;
+
+public class RegistroRequest {
+    private String email;
+    private String password;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-dto-cat">
+                            <pre><code>package devseniorjl.demo.dto;
+
+import devseniorjl.demo.model.Categoria;
+
+public class CategoriaDTO {
+    private Long id;
+    private String nombre;
+
+    public CategoriaDTO(Categoria categoria) {
+        this.id = categoria.getId();
+        this.nombre = categoria.getNombre();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+}
+
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-dto-marca">
+                            <pre><code>package devseniorjl.demo.dto;
+
+import devseniorjl.demo.model.Marca;
+
+public class MarcaDTO {
+    private Long id;
+    private String nombre;
+
+    public MarcaDTO(Marca marca) {
+        this.id = marca.getId();
+        this.nombre = marca.getNombre();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 6 -->
+            <section class="step-card" id="paso-6" data-tags="security">
+                <div class="step-header" onclick="toggleStepBody(6)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-6" onclick="event.stopPropagation(); toggleStepCheck(6)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 06</span>
+                            <h3 class="step-title">Capa de Seguridad y JWT (<code>security</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 20 min</span>
+                                <span class="meta-tag">🎯 JwtService, Filter, UserDetailsService, SecurityConfig</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.security</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-6">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-6">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Orden interno de creación de la seguridad:</strong>
+                            1. <code>JwtService</code> (firma, genera y valida el token).<br>
+                            2. <code>UsuarioDetailsService</code> (conecta la BD con Spring Security).<br>
+                            3. <code>JwtAuthFilter</code> (intercepta cada request HTTP, extrae el Bearer token y autentica el contexto).<br>
+                            4. <code>SecurityConfig</code> (configura la cadena de filtros, rutas públicas/privadas, SessionCreationPolicy.STATELESS y PasswordEncoder BCrypt).
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-jwt-service')">JwtService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-user-details')">UsuarioDetailsService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-jwt-filter')">JwtAuthFilter.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-sec-config')">SecurityConfig.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-jwt-service">
+                            <pre><code>package devseniorjl.demo.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Service
+public class JwtService {
+
+    private final SecretKey clave = Keys.hmacShaKeyFor(
+            &quot;clave-secreta-devsenior-cambiar-en-produccion-2026&quot;.getBytes());
+
+    private final long expiracionMs = 1000 * 60 * 60; // 1 hora
+
+    public String generarToken(String email, String rol) {
+        Date ahora = new Date();
+        Date expira = new Date(ahora.getTime() + expiracionMs);
+        return Jwts.builder()
+                .subject(email)
+                .claim(&quot;rol&quot;, rol)
+                .issuedAt(ahora)
+                .expiration(expira)
+                .signWith(clave)
+                .compact();
+    }
+
+    public String extraerEmail(String token) {
+        return parsearClaims(token).getSubject();
+    }
+
+    public boolean esValido(String token) {
+        try {
+            parsearClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims parsearClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(clave)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-user-details">
+                            <pre><code>package devseniorjl.demo.security;
+
+import devseniorjl.demo.model.Usuario;
+import devseniorjl.demo.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioDetailsService implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;Usuario no encontrado&quot;));
+
+        return User.withUsername(usuario.getEmail())
+                .password(usuario.getPassword())
+                .roles(usuario.getRol().name())
+                .build();
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-jwt-filter">
+                            <pre><code>package devseniorjl.demo.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+    private final UsuarioDetailsService usuarioDetailsService;
+
+    public JwtAuthFilter(JwtService jwtService, UsuarioDetailsService usuarioDetailsService) {
+        this.jwtService = jwtService;
+        this.usuarioDetailsService = usuarioDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String header = request.getHeader(&quot;Authorization&quot;);
+
+        if (header == null || !header.startsWith(&quot;Bearer &quot;)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (jwtService.esValido(token)
+                &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            String email = jwtService.extraerEmail(token);
+            UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-sec-config">
+                            <pre><code>package devseniorjl.demo.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -&gt; csrf.disable())
+                .authorizeHttpRequests(auth -&gt; auth
+                        .requestMatchers(&quot;/api/auth/**&quot;).permitAll()
+                        .requestMatchers(&quot;/swagger-ui/**&quot;, &quot;/swagger-ui.html&quot;, &quot;/v3/api-docs/**&quot;, &quot;/v3/api-docs&quot;).permitAll()
+                        .requestMatchers(HttpMethod.GET, &quot;/api/productos/**&quot;).permitAll()
+                        .requestMatchers(HttpMethod.POST, &quot;/api/productos/**&quot;).hasRole(&quot;ADMIN&quot;)
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(sm -&gt; sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 7 -->
+            <section class="step-card" id="paso-7" data-tags="api">
+                <div class="step-header" onclick="toggleStepBody(7)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-7" onclick="event.stopPropagation(); toggleStepCheck(7)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 07</span>
+                            <h3 class="step-title">Capa de Servicios y Lógica de Negocio (<code>service</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 AuthService, ProductoService, CategoriaService, MarcaService</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.service</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-7">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-7">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Por qué ProductoService busca la Categoría y Marca en BD antes de guardar?</strong>
+                            Cuando el cliente envía un JSON con <code>{ "categoria": { "id": 1 }, "marca": { "id": 2 } }</code>, esas entidades están "desconectadas" (detached). Buscarlas con <code>findById</code> asegura que existan y que Hibernate asocie correctamente las llaves foráneas.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-srv-auth')">AuthService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-srv-prod')">ProductoService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-srv-cat')">CategoriaService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-srv-marca')">MarcaService.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-srv-auth">
+                            <pre><code>package devseniorjl.demo.service;
+
+import devseniorjl.demo.dto.AuthResponse;
+import devseniorjl.demo.dto.LoginRequest;
+import devseniorjl.demo.dto.RegistroRequest;
+import devseniorjl.demo.model.Rol;
+import devseniorjl.demo.model.Usuario;
+import devseniorjl.demo.repository.UsuarioRepository;
+import devseniorjl.demo.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    public AuthService(UsuarioRepository usuarioRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtService jwtService) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    public AuthResponse registrar(RegistroRequest request) {
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setRol(Rol.USER);
+        usuarioRepository.save(usuario);
+
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token);
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(), request.getPassword()));
+
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token);
+    }
+
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-srv-prod">
+                            <pre><code>/*package devseniorjl.demo.service;
+
+import devseniorjl.demo.model.Producto;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class ProductoService {
+    private List&lt;Producto&gt; productos = new ArrayList&lt;&gt;();
+    public List&lt;Producto&gt; listarProductos() {
+        return productos;
+    }
+
+    public Producto agregarProducto(Producto producto) {
+        productos.add(producto);
+        return producto;
+    }
+}*/
+
+package devseniorjl.demo.service;
+
+import devseniorjl.demo.model.Categoria;
+import devseniorjl.demo.model.Marca;
+import devseniorjl.demo.model.Producto;
+import devseniorjl.demo.repository.CategoriaRepository;
+import devseniorjl.demo.repository.MarcaRepository;
+import devseniorjl.demo.repository.ProductoRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class ProductoService {
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final MarcaRepository marcaRepository;
+
+    public ProductoService(ProductoRepository productoRepository,
+                           CategoriaRepository categoriaRepository,
+                           MarcaRepository marcaRepository) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.marcaRepository = marcaRepository;
+    }
+
+    public List&lt;Producto&gt; listarProductos() {
+        return productoRepository.findAll();
+    }
+
+    public Producto agregarProducto(Producto producto) {
+        if (producto.getCategoria() != null &amp;&amp; producto.getCategoria().getId() != null) {
+            Categoria categoria = categoriaRepository.findById(producto.getCategoria().getId()).orElse(null);
+            producto.setCategoria(categoria);
+        }
+
+        if (producto.getMarca() != null &amp;&amp; producto.getMarca().getId() != null) {
+            Marca marca = marcaRepository.findById(producto.getMarca().getId()).orElse(null);
+            producto.setMarca(marca);
+        }
+
+        return productoRepository.save(producto);
+    }
+}
+
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-srv-cat">
+                            <pre><code>package devseniorjl.demo.service;
+
+import devseniorjl.demo.model.Categoria;
+import devseniorjl.demo.repository.CategoriaRepository;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class CategoriaService {
+    private final CategoriaRepository categoriaRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
+
+    public List&lt;Categoria&gt; listarCategorias() {
+        return categoriaRepository.findAll(); // 3. Usa el método del repositorio
+    }
+
+    public Categoria agregarCategoria(Categoria categoria) {
+        return categoriaRepository.save(categoria); // 4. Guarda en la BD
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-srv-marca">
+                            <pre><code>package devseniorjl.demo.service;
+
+import devseniorjl.demo.model.Marca;
+import devseniorjl.demo.repository.MarcaRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class MarcaService {
+    private final MarcaRepository marcaRepository;
+
+    public MarcaService(MarcaRepository marcaRepository) {
+        this.marcaRepository = marcaRepository;
+    }
+
+    public List&lt;Marca&gt; listarMarcas() {
+        return marcaRepository.findAll();
+    }
+
+    public Marca agregarMarca(Marca marca) {
+        return marcaRepository.save(marca);
+    }
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 8 -->
+            <section class="step-card" id="paso-8" data-tags="api">
+                <div class="step-header" onclick="toggleStepBody(8)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-8" onclick="event.stopPropagation(); toggleStepCheck(8)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 08</span>
+                            <h3 class="step-title">Capa de Controladores REST (<code>controller</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 AuthController, ProductoController, CategoriaController, MarcaController</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.controller</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-8">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-8">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Mapeo de Rutas y Transformación a DTOs:</strong>
+                            El controlador delega toda la lógica en el servicio y transforma los modelos de dominio a DTOs con <code>.stream().map(ProductoDTO::new).collect(Collectors.toList())</code> antes de responder al cliente.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-ctrl-auth')">AuthController.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-ctrl-prod')">ProductoController.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-ctrl-cat')">CategoriaController.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-ctrl-marca')">MarcaController.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="code-content active" id="code-ctrl-auth">
+                            <pre><code>package devseniorjl.demo.controller;
+
+import devseniorjl.demo.dto.AuthResponse;
+import devseniorjl.demo.dto.LoginRequest;
+import devseniorjl.demo.dto.RegistroRequest;
+import devseniorjl.demo.service.AuthService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/auth&quot;)
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping(&quot;/register&quot;)
+    public AuthResponse register(@RequestBody RegistroRequest request) {
+        return authService.registrar(request);
+    }
+
+    @PostMapping(&quot;/login&quot;)
+    public AuthResponse login(@RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-ctrl-prod">
+                            <pre><code>package devseniorjl.demo.controller;
+
+import devseniorjl.demo.dto.ProductoDTO;
+import devseniorjl.demo.model.Producto;
+import devseniorjl.demo.service.ProductoService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/api/productos&quot;)
+public class ProductoController {
+
+    private final ProductoService productoService;
+
+    public ProductoController(ProductoService productoService) {
+        this.productoService = productoService;
+    }
+
+    @GetMapping
+    public List&lt;ProductoDTO&gt; obtenerProductos() {
+        return productoService.listarProductos()
+                .stream()
+                .map(ProductoDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public ProductoDTO crearProducto(@RequestBody Producto producto) {
+        Producto guardado = productoService.agregarProducto(producto);
+        return new ProductoDTO(guardado);
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-ctrl-cat">
+                            <pre><code>package devseniorjl.demo.controller;
+
+import devseniorjl.demo.model.Categoria;
+import devseniorjl.demo.service.CategoriaService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/categorias&quot;)
+public class CategoriaController {
+
+    private final CategoriaService categoriaService;
+
+    public CategoriaController(CategoriaService categoriaService) {
+        this.categoriaService = categoriaService;
+    }
+
+    @GetMapping
+    public List&lt;Categoria&gt; obtenerCategorias() {
+        return categoriaService.listarCategorias();
+    }
+
+    /*@PostMapping(&quot;/crear&quot;)
+    public Categoria crearCategoria(@RequestBody Categoria categoria) {
+        return categoriaService.agregarCategoria(categoria);
+    }*/
+    @PostMapping
+    public Categoria crearCategoria(@RequestBody Categoria categoria) {
+        return categoriaService.agregarCategoria(categoria);
+    }
+}
+</code></pre>
+                        </div>
+                        <div class="code-content" id="code-ctrl-marca">
+                            <pre><code>package devseniorjl.demo.controller;
+
+import devseniorjl.demo.model.Marca;
+import devseniorjl.demo.service.MarcaService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/marcas&quot;)
+public class MarcaController {
+
+    private final MarcaService marcaService;
+
+    public MarcaController(MarcaService marcaService) {
+        this.marcaService = marcaService;
+    }
+
+    @GetMapping
+    public List&lt;Marca&gt; obtenerMarcas() {
+        return marcaService.listarMarcas();
+    }
+
+    @PostMapping
+    public Marca crearMarca(@RequestBody Marca marca) {
+        return marcaService.agregarMarca(marca);
+    }
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 9 -->
+            <section class="step-card" id="paso-9" data-tags="config">
+                <div class="step-header" onclick="toggleStepBody(9)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-9" onclick="event.stopPropagation(); toggleStepCheck(9)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 09</span>
+                            <h3 class="step-title">Documentación Swagger / OpenAPI 3 con Autenticación Bearer (<code>config</code>)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 5 min</span>
+                                <span class="meta-tag">🎯 @OpenAPIDefinition, @SecurityScheme Bearer JWT</span>
+                                <span class="meta-tag">📁 package devseniorjl.demo.config</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-9">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-9">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Botón "Authorize" en Swagger UI:</strong>
+                            Al configurar <code>@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT")</code>, la interfaz de Swagger UI (accesible en <code>http://localhost:8080/swagger-ui/index.html</code>) mostrará un botón de candado verde para pegar el Token JWT y probar los endpoints protegidos directamente en el navegador.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active">OpenApiConfig.java</button>
+                            </div>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCode('code-openapi')">📋 Copiar OpenApiConfig</button>
+                            </div>
+                        </div>
+                        <div class="code-content active" id="code-openapi">
+                            <pre><code>package devseniorjl.demo.config;
+
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@OpenAPIDefinition(
+        info = @Info(
+                title = &quot;API Gestor de Productos&quot;,
+                version = &quot;1.0&quot;,
+                description = &quot;API REST del catálogo de la tienda, con seguridad JWT.&quot;
+        ),
+        security = @SecurityRequirement(name = &quot;bearerAuth&quot;)
+)
+@SecurityScheme(
+        name = &quot;bearerAuth&quot;,
+        type = SecuritySchemeType.HTTP,
+        scheme = &quot;bearer&quot;,
+        bearerFormat = &quot;JWT&quot;
+)
+public class OpenApiConfig {}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 10 -->
+            <section class="step-card" id="paso-10" data-tags="api">
+                <div class="step-header" onclick="toggleStepBody(10)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-10" onclick="event.stopPropagation(); toggleStepCheck(10)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 10</span>
+                            <h3 class="step-title">Flujo de Ejecución, Pruebas y Simulador de Peticiones HTTP</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 cURL, Postman y Casos de Prueba</span>
+                                <span class="meta-tag">🧪 Pruebas End-to-End</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-10">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-10">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">🚀</span>
+                        <div class="callout-content">
+                            <strong>Flujo lógico de validación:</strong>
+                            1. <code>POST /api/auth/register</code>: Registra un usuario y recibe el Token JWT.<br>
+                            2. <code>POST /api/auth/login</code>: Autentica credenciales y devuelve nuevo Token.<br>
+                            3. <code>GET /api/productos</code>: Petición pública (no requiere cabecera de autenticación).<br>
+                            4. <code>POST /api/categorias</code> y <code>POST /api/marcas</code>: Requiere token Bearer de usuario autenticado.<br>
+                            5. <code>POST /api/productos</code>: Requiere token Bearer con rol <strong>ADMIN</strong> (devolverá 403 Forbidden si el usuario es solo <code>ROLE_USER</code>).
+                        </div>
+                    </div>
+
+                    <!-- Interactive HTTP Simulator -->
+                    <div class="api-simulator">
+                        <div class="section-header">
+                            <div>
+                                <h4 class="section-title">🧪 Simulador Interactivo de Endpoints</h4>
+                                <p class="section-subtitle">Selecciona una petición y presiona "Ejecutar Petición Simulada"</p>
+                            </div>
+                        </div>
+
+                        <div class="sim-grid">
+                            <div class="sim-panel">
+                                <div class="sim-title">
+                                    <span>Petición (Request)</span>
+                                    <span id="simMethodBadge" class="method-badge method-post">POST</span>
+                                </div>
+                                <select id="endpointSelect" class="endpoint-selector" onchange="updateSimRequest()">
+                                    <option value="register">POST /api/auth/register (Registro)</option>
+                                    <option value="login">POST /api/auth/login (Iniciar Sesión)</option>
+                                    <option value="get_prods">GET /api/productos (Público)</option>
+                                    <option value="post_cat">POST /api/categorias (Token Autenticado)</option>
+                                    <option value="post_marca">POST /api/marcas (Token Autenticado)</option>
+                                    <option value="post_prod_admin">POST /api/productos (Rol ADMIN)</option>
+                                    <option value="post_prod_user">POST /api/productos (Rol USER - 403 Test)</option>
+                                </select>
+
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Headers:</label>
+                                    <pre id="simHeaders" style="padding: 0.6rem; font-size: 0.78rem; border: 1px solid var(--border-color); border-radius: 4px;"><code>Content-Type: application/json</code></pre>
+                                </div>
+
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Request Body (JSON):</label>
+                                    <textarea id="simBody" style="width: 100%; height: 110px; background: var(--bg-code); color: #a7f3d0; font-family: var(--font-mono); font-size: 0.8rem; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.6rem; outline: none;"></textarea>
+                                </div>
+
+                                <button class="btn-run" onclick="executeSimulatedRequest()">⚡ Ejecutar Petición Simulada</button>
+                            </div>
+
+                            <div class="sim-panel">
+                                <div class="sim-title">
+                                    <span>Respuesta (Response)</span>
+                                    <span id="simStatusBadge" style="font-size: 0.8rem; font-weight: 700; color: var(--accent-green);">200 OK</span>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Response Body (JSON):</label>
+                                    <pre id="simResponse" style="height: 220px; overflow-y: auto; background: var(--bg-code); padding: 0.75rem; border-radius: 4px; border: 1px solid var(--border-color); font-size: 0.8rem; color: #f8fafc;"><code>{
+  "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3VhcmlvQHRlc3QuY29tIiwicm9sIjoiVVNFUiIsImlhdCI6MTc4NTYxNTQxOCwiZXhwIjoxNzg1NjE5MDE4fQ.ejemploTokenFirmado..."
+}</code></pre>
+                                </div>
+                                <div id="simExplanation" style="font-size: 0.8rem; color: var(--accent-primary); background: rgba(56, 189, 248, 0.1); padding: 0.6rem; border-radius: 4px;">
+                                    ℹ️ Registro exitoso: Se encripta el password con BCrypt, se guarda el usuario en MySQL y se devuelve un JWT firmado con expiración de 1 hora.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ & Troubleshooting -->
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="color: #fff; margin-bottom: 1rem;">🛠️ Preguntas Frecuentes y Solución de Errores Comunes</h4>
+                        
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>1. ¿Por qué obtengo error 403 Forbidden al crear un producto?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                En <code>SecurityConfig.java</code>, la regla <code>.requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")</code> exige que el token JWT contenga el rol <code>ADMIN</code> (que Spring interpreta internamente con el prefijo <code>ROLE_ADMIN</code>). Los usuarios registrados por defecto mediante <code>/api/auth/register</code> reciben el rol <code>USER</code>. Para probar la creación de productos, debes asignar manualmente el rol <code>ADMIN</code> al usuario en la base de datos o modificar temporalmente la regla.
+                            </div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>2. ¿Cómo evitar el error 'StackOverflowError' en relaciones @OneToMany / @ManyToOne?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                Esto ocurre cuando una entidad apunta a otra y esa a su vez a la primera, creando un ciclo infinito de serialización en Jackson JSON. La mejor práctica de arquitectura es **no exponer las entidades en el controlador**, sino mapearlas a un <strong>DTO (Data Transfer Object)</strong> como <code>ProductoDTO</code>, que solo extrae los campos primitivos necesarios (e.g., <code>categoria.getNombre()</code>).
+                            </div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>3. ¿Qué longitud mínima debe tener la clave de firma JWT?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                A partir de las versiones modernas de JJWT (0.12+ / 0.13+), el algoritmo HMAC-SHA256 requiere una clave de al menos **256 bits (32 bytes / 32 caracteres)**. Si utilizas una cadena más corta, la aplicación lanzará una excepción <code>WeakKeyException</code> durante el arranque.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p><strong>Guía Interactiva de Desarrollo Backend Java & Spring Boot</strong></p>
+        <p style="margin-top: 0.3rem;">Diseñada con estándares de Arquitectura Limpia, Seguridad JWT y Persistencia Relacional.</p>
+    </footer>
+
+    <script>
+        const totalSteps = 11;
+        let completedSteps = JSON.parse(localStorage.getItem('spring_guide_completed') || '[]');
+
+        function updateProgress() {
+            const count = completedSteps.length;
+            const percentage = Math.round((count / totalSteps) * 100);
+            
+            document.getElementById('overallProgressBar').style.width = percentage + '%';
+            document.getElementById('progressPercentage').innerText = percentage + '%';
+            document.getElementById('stepsCount').innerText = `${count}/${totalSteps}`;
+
+            for (let i = 0; i < totalSteps; i++) {
+                const isComp = completedSteps.includes(i);
+                const navCheck = document.getElementById(`check-nav-${i}`);
+                const stepCheck = document.getElementById(`check-step-${i}`);
+                if (navCheck) navCheck.classList.toggle('completed', isComp);
+                if (stepCheck) stepCheck.checked = isComp;
+            }
+
+            localStorage.setItem('spring_guide_completed', JSON.stringify(completedSteps));
+        }
+
+        function toggleStepCheck(stepIndex) {
+            if (completedSteps.includes(stepIndex)) {
+                completedSteps = completedSteps.filter(x => x !== stepIndex);
+            } else {
+                completedSteps.push(stepIndex);
+            }
+            updateProgress();
+        }
+
+        function resetProgress() {
+            if (confirm('¿Deseas reiniciar el estado de avance de la guía?')) {
+                completedSteps = [];
+                updateProgress();
+            }
+        }
+
+        function toggleStepBody(index) {
+            const body = document.getElementById(`step-body-${index}`);
+            const btn = document.getElementById(`toggle-btn-${index}`);
+            if (body) {
+                body.classList.toggle('hidden');
+                btn.classList.toggle('collapsed');
+            }
+        }
+
+        function switchTab(buttonElement, targetId) {
+            const parent = buttonElement.closest('.code-container');
+            const tabs = parent.querySelectorAll('.code-tab');
+            const contents = parent.querySelectorAll('.code-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            buttonElement.classList.add('active');
+            const targetContent = parent.querySelector(`#${targetId}`);
+            if (targetContent) targetContent.classList.add('active');
+        }
+
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('¡Código copiado al portapapeles!');
+            });
+        }
+
+        function copyCurrentTabCode(btn) {
+            const parent = btn.closest('.code-container');
+            const activeContent = parent.querySelector('.code-content.active');
+            if (activeContent) {
+                navigator.clipboard.writeText(activeContent.innerText).then(() => {
+                    const origText = btn.innerHTML;
+                    btn.innerHTML = '✅ ¡Copiado!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.innerHTML = origText;
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.innerText = msg;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '2rem';
+            toast.style.right = '2rem';
+            toast.style.background = 'var(--accent-green)';
+            toast.style.color = '#0b1120';
+            toast.style.fontWeight = '700';
+            toast.style.padding = '0.75rem 1.25rem';
+            toast.style.borderRadius = '8px';
+            toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+            toast.style.zIndex = '9999';
+            toast.style.transition = 'all 0.3s ease';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        const archDetails = {
+            client: {
+                title: "1. Cliente HTTP (Postman / Frontend / Swagger UI)",
+                text: "Envía peticiones HTTP (GET, POST, PUT, DELETE) con cuerpo JSON y encabezado 'Authorization: Bearer <token>' cuando el recurso es protegido."
+            },
+            security: {
+                title: "2. JwtAuthFilter & SecurityConfig",
+                text: "Intercepta cada petición antes de llegar al controlador. Extrae el token del header 'Authorization', valida la firma con la clave secreta HMAC, extrae el usuario y asigna los roles en el SecurityContextHolder."
+            },
+            controller: {
+                title: "3. Capa de Controladores REST (@RestController)",
+                text: "Define los endpoints URL (@RequestMapping), valida el cuerpo de la petición (@RequestBody) y delega la ejecución al servicio correspondiente. Retorna siempre DTOs para evitar ciclos de serialización."
+            },
+            service: {
+                title: "4. Capa de Servicios (@Service)",
+                text: "Contiene la lógica de negocio: codificación de contraseñas con BCrypt, autenticación en AuthenticationManager, generación de JWT y asociación de entidades relacionadas (Marca/Categoría) antes de guardar."
+            },
+            repository: {
+                title: "5. Capa de Repositorios (Spring Data JPA)",
+                text: "Interfaces que extienden JpaRepository. Spring Data implementa automáticamente las consultas SQL y métodos derivados como findByEmail y findByCategoriaId."
+            },
+            db: {
+                title: "6. Base de Datos MySQL (tiendabd)",
+                text: "Almacena las tablas relacionales 'usuarios', 'categorias', 'marcas' y 'productos' con llaves foráneas y tipos de datos normalizados."
+            }
+        };
+
+        function showArchDetail(key) {
+            const info = archDetails[key];
+            if (!info) return;
+            const box = document.getElementById('archDetailBox');
+            document.getElementById('archDetailTitle').innerText = info.title;
+            document.getElementById('archDetailText').innerText = info.text;
+            box.classList.add('show');
+            
+            document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function filterSteps() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.step-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterByTag(tag, btn) {
+            document.querySelectorAll('.filter-tags .tag-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.step-card').forEach(card => {
+                const cardTags = card.getAttribute('data-tags') || '';
+                if (tag === 'all' || cardTags.includes(tag)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        const simRequests = {
+            register: {
+                method: "POST",
+                headers: "Content-Type: application/json",
+                body: JSON.stringify({ email: "nuevo_usuario@tienda.com", password: "PasswordSeguro123" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({ token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJudWV2b191c3VhcmlvQHRpZW5kYS5jb20iLCJyb2wiOiJVU0VSIiwiaWF0IjoxNzg1NjE1NDE4LCJleHAiOjE3ODU2MTkwMTh9.dGVzdFRva2VuU2lnbmVkMTIz" }, null, 2),
+                explanation: "ℹ️ Registro exitoso: Usuario guardado en la tabla 'usuarios' con contraseña encriptada (BCrypt) y rol USER por defecto. Devuelve Token JWT listo para usar."
+            },
+            login: {
+                method: "POST",
+                headers: "Content-Type: application/json",
+                body: JSON.stringify({ email: "nuevo_usuario@tienda.com", password: "PasswordSeguro123" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({ token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJudWV2b191c3VhcmlvQHRpZW5kYS5jb20iLCJyb2wiOiJVU0VSIiwiaWF0IjoxNzg1NjE1NDE4LCJleHAiOjE3ODU2MTkwMTh9.dGVzdFRva2VuTG9naW4xMjM" }, null, 2),
+                explanation: "ℹ️ Login exitoso: AuthenticationManager valida el email y la contraseña con el hash BCrypt y emite un nuevo JWT."
+            },
+            get_prods: {
+                method: "GET",
+                headers: "Accept: application/json (Público - Sin Token)",
+                body: "(Sin Body)",
+                status: "200 OK",
+                response: JSON.stringify([
+                    { id: 1, nombre: "Laptop Gamer RTX", precio: 4500000.0, stock: 15, categoria: "Tecnología", marca: "ASUS" },
+                    { id: 2, nombre: "Mouse Inalámbrico", precio: 120000.0, stock: 50, categoria: "Accesorios", marca: "Logitech" }
+                ], null, 2),
+                explanation: "ℹ️ Endpoint público: Configurado en SecurityConfig con HttpMethod.GET permitAll(). Devuelve lista de ProductoDTO."
+            },
+            post_cat: {
+                method: "POST",
+                headers: "Content-Type: application/json\nAuthorization: Bearer <TOKEN_JWT>",
+                body: JSON.stringify({ nombre: "Audio y Video" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({ id: 3, nombre: "Audio y Video", productos: [] }, null, 2),
+                explanation: "ℹ️ Creación de Categoría: JwtAuthFilter valida el token y autoriza la petición al estar autenticado."
+            },
+            post_marca: {
+                method: "POST",
+                headers: "Content-Type: application/json\nAuthorization: Bearer <TOKEN_JWT>",
+                body: JSON.stringify({ nombre: "Sony" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({ id: 3, nombre: "Sony" }, null, 2),
+                explanation: "ℹ️ Creación de Marca: Guarda en la tabla 'marcas' y retorna la entidad persistida con su nuevo ID autogenerado."
+            },
+            post_prod_admin: {
+                method: "POST",
+                headers: "Content-Type: application/json\nAuthorization: Bearer <TOKEN_JWT_ADMIN>",
+                body: JSON.stringify({
+                    nombre: "Teclado Mecánico RGB",
+                    descripcion: "Switches mecánicos táctiles",
+                    precio: 350000.0,
+                    stock: 20,
+                    categoria: { id: 1 },
+                    marca: { id: 2 }
+                }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({
+                    id: 3,
+                    nombre: "Teclado Mecánico RGB",
+                    precio: 350000.0,
+                    stock: 20,
+                    categoria: "Tecnología",
+                    marca: "Logitech"
+                }, null, 2),
+                explanation: "ℹ️ Creación de Producto exitosa: Usuario con rol ADMIN verificado por hasRole('ADMIN'). ProductoService asocia Categoria y Marca y devuelve ProductoDTO."
+            },
+            post_prod_user: {
+                method: "POST",
+                headers: "Content-Type: application/json\nAuthorization: Bearer <TOKEN_JWT_USER>",
+                body: JSON.stringify({
+                    nombre: "Audífonos Bluetooth",
+                    precio: 200000.0,
+                    stock: 10,
+                    categoria: { id: 1 },
+                    marca: { id: 1 }
+                }, null, 2),
+                status: "403 Forbidden",
+                response: JSON.stringify({
+                    timestamp: "2026-08-30T18:57:00Z",
+                    status: 403,
+                    error: "Forbidden",
+                    message: "Access Denied: Se requiere el rol ADMIN para crear productos.",
+                    path: "/api/productos"
+                }, null, 2),
+                explanation: "⛔ 403 Acceso Denegado: El token es válido pero el usuario tiene rol USER y la regla exige hasRole('ADMIN')."
+            }
+        };
+
+        function updateSimRequest() {
+            const key = document.getElementById('endpointSelect').value;
+            const data = simRequests[key];
+            if (!data) return;
+
+            const badge = document.getElementById('simMethodBadge');
+            badge.innerText = data.method;
+            badge.className = `method-badge method-${data.method.toLowerCase()}`;
+
+            document.getElementById('simHeaders').innerText = data.headers;
+            document.getElementById('simBody').value = data.body;
+        }
+
+        function executeSimulatedRequest() {
+            const key = document.getElementById('endpointSelect').value;
+            const data = simRequests[key];
+            if (!data) return;
+
+            const statusBadge = document.getElementById('simStatusBadge');
+            statusBadge.innerText = data.status;
+            statusBadge.style.color = data.status.startsWith('2') ? 'var(--accent-green)' : 'var(--accent-rose)';
+
+            document.getElementById('simResponse').innerText = data.response;
+            document.getElementById('simExplanation').innerText = data.explanation;
+            showToast(`Petición simulada ejecutada (${data.status})`);
+        }
+
+        function toggleFaq(el) {
+            el.classList.toggle('open');
+            const sign = el.querySelector('.faq-question span:last-child');
+            if (sign) {
+                sign.innerText = el.classList.contains('open') ? '−' : '+';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress();
+            updateSimRequest();
+        });
+    </script>
+</body>
+</html>

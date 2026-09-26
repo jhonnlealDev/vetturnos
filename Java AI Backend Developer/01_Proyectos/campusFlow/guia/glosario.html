@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glosario Interactivo Java & Spring Boot - CampusFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --accent-color: #38bdf8;
+            --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --badge-java: #f97316;
+            --badge-spring: #22c55e;
+            --badge-jpa: #a855f7;
+            --badge-rest: #ec4899;
+            --badge-arch: #0ea5e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .term {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-java { background: rgba(249, 115, 22, 0.15); color: var(--badge-java); }
+        .tag-spring { background: rgba(34, 197, 94, 0.15); color: var(--badge-spring); }
+        .tag-jpa { background: rgba(168, 85, 247, 0.15); color: var(--badge-jpa); }
+        .tag-rest { background: rgba(236, 72, 153, 0.15); color: var(--badge-rest); }
+        .tag-arch { background: rgba(14, 165, 233, 0.15); color: var(--badge-arch); }
+
+        .definition {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .example {
+            margin-top: 0.8rem;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📚 Glosario de Desarrollo Java & Spring Boot</h1>
+        <p>Diccionario interactivo de conceptos, anotaciones y términos clave del proyecto CampusFlow</p>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar término o anotación (ej: @Entity, DTO, Service, JPA)..." onkeyup="filterTerms()">
+    </div>
+
+    <div class="grid" id="termsGrid">
+
+        <!-- Term 1 -->
+        <div class="card" data-term="@Entity @Table">
+            <div class="card-header">
+                <div class="term">@Entity</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Anotación que marca una clase Java como una Entidad de Persistencia. Indica a Hibernate que esta clase corresponde a una tabla en la base de datos MySQL.
+            </div>
+            <div class="example">@Entity<br>@Table(name = "usuarios")</div>
+        </div>
+
+        <!-- Term 2 -->
+        <div class="card" data-term="JpaRepository Interface">
+            <div class="card-header">
+                <div class="term">JpaRepository</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Interfaz de Spring Data JPA que proporciona métodos predefinidos para realizar operaciones CRUD (Create, Read, Update, Delete) sin escribir SQL manual.
+            </div>
+            <div class="example">public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt;</div>
+        </div>
+
+        <!-- Term 3 -->
+        <div class="card" data-term="@Service Capa de Servicio">
+            <div class="card-header">
+                <div class="term">@Service</div>
+                <span class="tag tag-spring">Spring Boot</span>
+            </div>
+            <div class="definition">
+                Anotación que indica que una clase pertenece a la Capa de Negocio (Service Layer). Allí se procesa la lógica principal antes de interactuar con la base de datos o el controlador.
+            </div>
+            <div class="example">@Service<br>public class UsuarioService { ... }</div>
+        </div>
+
+        <!-- Term 4 -->
+        <div class="card" data-term="@RestController API REST">
+            <div class="card-header">
+                <div class="term">@RestController</div>
+                <span class="tag tag-rest">HTTP & REST</span>
+            </div>
+            <div class="definition">
+                Anotación que combina `@Controller` y `@ResponseBody`. Le indica a Spring que los métodos de esta clase responderán directamente peticiones HTTP en formato JSON.
+            </div>
+            <div class="example">@RestController<br>@RequestMapping("/api/usuarios")</div>
+        </div>
+
+        <!-- Term 5 -->
+        <div class="card" data-term="Inyección por Constructor Dependency Injection">
+            <div class="card-header">
+                <div class="term">Constructor Injection</div>
+                <span class="tag tag-arch">Arquitectura</span>
+            </div>
+            <div class="definition">
+                Patrón de diseño donde las dependencias se pasan a través del constructor utilizando campos `private final`. Es la mejor práctica recomendada por Spring en lugar de `@Autowired`.
+            </div>
+            <div class="example">public UsuarioService(UsuarioRepository repo) { this.repo = repo; }</div>
+        </div>
+
+        <!-- Term 6 -->
+        <div class="card" data-term="@Transactional Transacciones">
+            <div class="card-header">
+                <div class="term">@Transactional</div>
+                <span class="tag tag-spring">Spring Boot</span>
+            </div>
+            <div class="definition">
+                Asegura que un método se ejecute dentro de una transacción de base de datos. Si ocurre un error, hace rollback automático. Con `readOnly = true` optimiza las consultas de lectura.
+            </div>
+            <div class="example">@Transactional(readOnly = true)</div>
+        </div>
+
+        <!-- Term 7 -->
+        <div class="card" data-term="@RestControllerAdvice ExceptionHandler">
+            <div class="card-header">
+                <div class="term">@RestControllerAdvice</div>
+                <span class="tag tag-rest">HTTP & REST</span>
+            </div>
+            <div class="definition">
+                Permite capturar excepciones lanzadas en cualquier controlador de la aplicación para responder con respuestas JSON limpias y estandarizadas (ej: 404 Not Found, 500 Error).
+            </div>
+            <div class="example">@ExceptionHandler(ResourceNotFoundException.class)</div>
+        </div>
+
+        <!-- Term 8 -->
+        <div class="card" data-term="Maven pom.xml Dependencias">
+            <div class="card-header">
+                <div class="term">Maven (pom.xml)</div>
+                <span class="tag tag-java">Java Core</span>
+            </div>
+            <div class="definition">
+                Herramienta de gestión y construcción de proyectos Java. El archivo `pom.xml` declara todas las dependencias (librerías) y plugins necesarios.
+            </div>
+            <div class="example">&lt;dependency&gt;...&lt;/dependency&gt;</div>
+        </div>
+
+        <!-- Term 9 -->
+        <div class="card" data-term="Variables de Entorno application.properties Fallbacks">
+            <div class="card-header">
+                <div class="term">Environment Fallback</div>
+                <span class="tag tag-spring">Spring Boot</span>
+            </div>
+            <div class="definition">
+                Sintaxis `${VARIABLE:default}` en `application.properties` que intenta leer la variable del sistema y, si no existe, usa el valor por defecto configurado.
+            </div>
+            <div class="example">${DB_USERNAME:root}</div>
+        </div>
+
+        <!-- Term 10 -->
+        <div class="card" data-term="Dominio de Negocio Packages Subpaquetes">
+            <div class="card-header">
+                <div class="term">Domain Architecture</div>
+                <span class="tag tag-arch">Arquitectura</span>
+            </div>
+            <div class="definition">
+                Organización del código por módulos del negocio (`usuarios`, `cursos`) que contiene sus propias subcarpetas `model`, `repository`, `service` y `controller`.
+            </div>
+            <div class="example">com.devsenior.campusFlow.usuarios.service</div>
+        </div>
+
+        <!-- Term 11 -->
+        <div class="card" data-term="Clean Code Código Limpio SRP DRY">
+            <div class="card-header">
+                <div class="term">Clean Code</div>
+                <span class="tag tag-arch">Arquitectura</span>
+            </div>
+            <div class="definition">
+                Conjunto de principios de programación orientados a escribir código legible, mantenible y simple. Incluye nombres descriptivos, funciones pequeñas con una sola responsabilidad (SRP) y evitar duplicación (DRY).
+            </div>
+            <div class="example">SRP, DRY, Nombres Explicativos</div>
+        </div>
+
+        <!-- Term 12 -->
+        <div class="card" data-term="@Embeddable Incrustable Componente">
+            <div class="card-header">
+                <div class="term">@Embeddable</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Anotación que marca una clase cuyos atributos se incrustarán directamente en la tabla de la entidad que la utilice (`@Embedded`), facilitando la reutilización y el diseño limpio sin crear tablas adicionales.
+            </div>
+            <div class="example">@Embeddable<br>public class PreferenciasUsuario</div>
+        </div>
+
+        <!-- Term 13 -->
+        <div class="card" data-term="@Enumerated Enum EnumType.STRING">
+            <div class="card-header">
+                <div class="term">@Enumerated</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Anotación que define cómo se debe persistir un tipo Enumerado en la base de datos. Con `EnumType.STRING`, se almacena el nombre del valor constante (ej: "CLARO", "OSCURO") en lugar de su índice cardinal.
+            </div>
+            <div class="example">@Enumerated(EnumType.STRING)<br>private TemaVisual tema;</div>
+        </div>
+
+        <!-- Term 14 -->
+        <div class="card" data-term="@OneToMany Relación Uno a Muchos">
+            <div class="card-header">
+                <div class="term">@OneToMany</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Define una relación de uno a muchos entre entidades (ej: un Instructor dicta muchos Cursos). El atributo `mappedBy` indica el nombre de la propiedad en la entidad contenedora.
+            </div>
+            <div class="example">@OneToMany(mappedBy = "instructor")<br>private List&lt;Curso&gt; cursosDictados;</div>
+        </div>
+
+        <!-- Term 15 -->
+        <div class="card" data-term="@ManyToMany Relación Muchos a Muchos">
+            <div class="card-header">
+                <div class="term">@ManyToMany</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Define una relación de muchos a muchos entre entidades (ej: un Estudiante se inscribe en muchos Cursos y un Curso tiene muchos Estudiantes).
+            </div>
+            <div class="example">@ManyToMany(mappedBy = "estudiantes")<br>private List&lt;Curso&gt; cursosInscritos;</div>
+        </div>
+
+        <!-- Term 16 -->
+        <div class="card" data-term="@ManyToOne Relación Muchos a Uno JoinColumn">
+            <div class="card-header">
+                <div class="term">@ManyToOne</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Define la relación donde muchas instancias de una entidad (ej: Curso) se asocian con una sola instancia de otra (ej: Usuario/Instructor). Se combina con `@JoinColumn` para especificar la clave foránea.
+            </div>
+            <div class="example">@ManyToOne<br>@JoinColumn(name = "instructor_id")</div>
+        </div>
+
+        <!-- Term 17 -->
+        <div class="card" data-term="@JoinTable Tabla Intermedia Relacion ManyToMany">
+            <div class="card-header">
+                <div class="term">@JoinTable</div>
+                <span class="tag tag-jpa">JPA / Hibernate</span>
+            </div>
+            <div class="definition">
+                Configura el nombre y las columnas clave foráneas de la tabla intermedia generada en una relación `@ManyToMany` entre dos entidades.
+            </div>
+            <div class="example">@JoinTable(name = "curso_estudiante", ... )</div>
+        </div>
+
+        <!-- Term 18 -->
+        <div class="card" data-term="DTO Data Transfer Object Request Response">
+            <div class="card-header">
+                <div class="term">DTO (Data Transfer Object)</div>
+                <span class="tag tag-arch">Arquitectura</span>
+            </div>
+            <div class="definition">
+                Objeto diseñado exclusivamente para transportar datos entre capas de la aplicación sin exponer directamente las entidades de la base de datos JPA.
+            </div>
+            <div class="example">CrearUsuarioRequest, ActualizarUsuarioRequest, UsuarioResponse</div>
+        </div>
+
+        <!-- Term 19 -->
+        <div class="card" data-term="Bean Validation @NotBlank @Email @NotNull Validaciones">
+            <div class="card-header">
+                <div class="term">Bean Validation</div>
+                <span class="tag tag-spring">Spring Boot</span>
+            </div>
+            <div class="definition">
+                Anotaciones estándar de Java/Jakarta (`@NotBlank`, `@Email`, `@NotNull`, `@Size`) para validar automáticamente el cuerpo de las peticiones HTTP antes de ser procesadas por el backend.
+            </div>
+            <div class="example">@NotBlank(message = "El nombre es obligatorio")</div>
+        </div>
+
+        <!-- Term 20 -->
+        <div class="card" data-term="Mapper Mapeador Conversor DTO Entidad">
+            <div class="card-header">
+                <div class="term">Mapper (Mapeador)</div>
+                <span class="tag tag-arch">Arquitectura</span>
+            </div>
+            <div class="definition">
+                Clase o componente encargado de transformar objetos DTO a Entidades JPA y viceversa, aislando la lógica de conversión en una única responsabilidad.
+            </div>
+            <div class="example">com.devsenior.campusFlow.usuarios.mapper</div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Proyecto CampusFlow | Guía Educativa para el Aprendizaje de Java & Spring Boot</p>
+        <p>Consulta el <a href="manual_paso_a_paso.md">Manual Paso a Paso en Markdown</a></p>
+    </footer>
+</div>
+
+<script>
+    function filterTerms() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+            const termData = card.getAttribute('data-term').toLowerCase();
+            const textContent = card.textContent.toLowerCase();
+            
+            if (termData.includes(input) || textContent.includes(input)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

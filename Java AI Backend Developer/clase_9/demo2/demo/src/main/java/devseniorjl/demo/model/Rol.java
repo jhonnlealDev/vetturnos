@@ -1,4 +1,6 @@
 package devseniorjl.demo.model;
 
-public class Rol {
+public enum Rol {
+    USER,
+    ADMIN
 }

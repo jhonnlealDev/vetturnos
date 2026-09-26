@@ -1,0 +1,3246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFlow — Guía Maestra Interactiva: Spring Boot 3, JWT y Pagos SaaS con Stripe</title>
+    <style>
+        :root {
+            --bg-primary: #070b14;
+            --bg-secondary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --bg-code: #030712;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #38bdf8;
+            --accent-purple: #c084fc;
+            --accent-stripe: #635bff;
+            --accent-green: #34d399;
+            --accent-amber: #fbbf24;
+            --accent-rose: #fb7185;
+            --border-color: #1e293b;
+            --border-highlight: #334155;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #070b14 0%, #0f172a 50%, #17113a 100%);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+        }
+
+        .header-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand { display: flex; align-items: center; gap: 0.85rem; }
+
+        .brand-icon {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-stripe));
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #fff;
+            box-shadow: 0 0 18px rgba(99, 91, 255, 0.4);
+        }
+
+        .brand-text h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-text p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .header-stats { display: flex; align-items: center; gap: 1.25rem; }
+
+        .progress-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-secondary);
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-highlight);
+        }
+
+        .progress-bar-container {
+            width: 140px;
+            height: 8px;
+            background: #030712;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-green));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 40px;
+        }
+
+        .app-layout {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .app-layout { grid-template-columns: 1fr; }
+            .sidebar { position: static !important; max-height: none !important; }
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 5.5rem;
+            max-height: calc(100vh - 7rem);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            padding-right: 0.5rem;
+        }
+
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 3px; }
+
+        .sidebar-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            box-shadow: var(--shadow);
+        }
+
+        .sidebar-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box { position: relative; margin-bottom: 1rem; }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            color: var(--text-primary);
+            padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .filter-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+
+        .tag-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-btn:hover, .tag-btn.active {
+            background: var(--accent-primary);
+            color: #070b14;
+            border-color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.55rem 0.75rem;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.83rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--border-highlight);
+        }
+
+        .nav-item.active {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-primary);
+            border-color: rgba(56, 189, 248, 0.3);
+            font-weight: 600;
+        }
+
+        .nav-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .nav-badge {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+        }
+
+        .nav-item.active .nav-badge {
+            background: var(--accent-primary);
+            color: #070b14;
+        }
+
+        .nav-check {
+            color: var(--accent-green);
+            font-size: 0.95rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .nav-check.completed { opacity: 1; }
+
+        .content-area { display: flex; flex-direction: column; gap: 2rem; }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #070b14 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            padding: 2.25rem;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 91, 255, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.25;
+        }
+
+        .hero-title em {
+            color: var(--accent-stripe);
+            font-style: normal;
+        }
+
+        .hero-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            max-width: 920px;
+        }
+
+        .hero-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-box {
+            background: rgba(7, 11, 20, 0.7);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .feature-box .icon { font-size: 1.3rem; }
+        .feature-box .title { font-size: 0.9rem; font-weight: 700; color: #fff; }
+        .feature-box .desc { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .arch-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .arch-diagram {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .arch-node {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            padding: 1rem 0.8rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .arch-node:hover, .arch-node.selected {
+            border-color: var(--accent-stripe);
+            box-shadow: 0 0 15px rgba(99, 91, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .arch-node-step {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .arch-node-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .arch-node-desc { font-size: 0.73rem; color: var(--text-secondary); }
+
+        .arch-node-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-size: 0.65rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            background: rgba(99, 91, 255, 0.15);
+            color: #a5b4fc;
+        }
+
+        .arch-detail-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            margin-top: 1rem;
+            display: none;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        .arch-detail-box.show { display: block; }
+
+        .step-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .step-card:hover { border-color: var(--border-highlight); }
+
+        .step-header {
+            padding: 1.4rem 1.75rem;
+            background: rgba(7, 11, 20, 0.6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .step-header-left { display: flex; align-items: flex-start; gap: 1rem; }
+
+        .step-checkbox {
+            margin-top: 0.35rem;
+            width: 22px;
+            height: 22px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+
+        .step-badge {
+            background: var(--accent-primary);
+            color: #070b14;
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .step-badge-stripe {
+            background: var(--accent-stripe);
+            color: #fff;
+        }
+
+        .step-title-area { display: flex; flex-direction: column; gap: 0.3rem; }
+
+        .step-title { font-size: 1.15rem; font-weight: 700; color: #fff; }
+
+        .step-meta { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+
+        .meta-tag {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .step-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.2s;
+        }
+
+        .toggle-btn.collapsed { transform: rotate(-90deg); }
+
+        .step-body {
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .step-body.hidden { display: none; }
+
+        .callout {
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            font-size: 0.88rem;
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+        }
+
+        .callout-why {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #bae6fd;
+        }
+
+        .callout-tip {
+            background: rgba(52, 211, 153, 0.08);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            color: #a7f3d0;
+        }
+
+        .callout-stripe {
+            background: rgba(99, 91, 255, 0.12);
+            border: 1px solid rgba(99, 91, 255, 0.35);
+            color: #c7d2fe;
+        }
+
+        .callout-warning {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+            color: #fde68a;
+        }
+
+        .callout-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+        .callout-content strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+
+        .code-container {
+            background: var(--bg-code);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #0d1222;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-highlight);
+        }
+
+        .code-tabs { display: flex; gap: 0.3rem; overflow-x: auto; }
+
+        .code-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-tab:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.05); }
+
+        .code-tab.active {
+            background: var(--bg-card);
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .code-actions { display: flex; align-items: center; gap: 0.5rem; }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border-highlight);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.65rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-primary);
+            color: #070b14;
+            border-color: var(--accent-primary);
+            font-weight: 700;
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            color: #070b14;
+            border-color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        pre {
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            color: #e2e8f0;
+        }
+
+        .code-content { display: none; }
+        .code-content.active { display: block; }
+
+        .api-simulator {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 850px) { .sim-grid { grid-template-columns: 1fr; } }
+
+        .sim-panel {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sim-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .endpoint-selector {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-highlight);
+            color: #fff;
+            padding: 0.6rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .method-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+        .method-get { background: rgba(56, 189, 248, 0.2); color: var(--accent-primary); }
+        .method-post { background: rgba(52, 211, 153, 0.2); color: var(--accent-green); }
+        .method-stripe { background: rgba(99, 91, 255, 0.25); color: #a5b4fc; }
+
+        .btn-run {
+            background: linear-gradient(135deg, var(--accent-stripe), #4338ca);
+            color: #fff;
+            border: none;
+            font-weight: 700;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-run:hover { opacity: 0.9; }
+
+        .faq-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 1.25rem 1.25rem 1.25rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+        }
+
+        .faq-item.open .faq-answer { display: block; }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 4rem;
+            background: #030712;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">🎓</div>
+                <div class="brand-text">
+                    <h1>CampusFlow — Backend Architecture & Stripe SaaS</h1>
+                    <p>Módulo 4: Clases 14 (Usuarios y Relaciones) y 15 (Cobros y Webhooks con Stripe)</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="progress-box">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Progreso:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="overallProgressBar"></div>
+                    </div>
+                    <span class="progress-label" id="progressPercentage">0%</span>
+                </div>
+                <button class="tag-btn" onclick="resetProgress()" title="Reiniciar avance">🔄 Reiniciar</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span>Buscador Rápido</span>
+                </div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar clase, Stripe, JWT..." onkeyup="filterSteps()">
+                </div>
+                <div class="filter-tags">
+                    <button class="tag-btn active" onclick="filterByTag('all', this)">Todos</button>
+                    <button class="tag-btn" onclick="filterByTag('c14', this)">Clase 14 (Core)</button>
+                    <button class="tag-btn" onclick="filterByTag('c15', this)">Clase 15 (Stripe)</button>
+                    <button class="tag-btn" onclick="filterByTag('security', this)">Seguridad</button>
+                </div>
+
+                <div class="sidebar-title" style="margin-top: 1rem;">
+                    <span>Pasos de CampusFlow</span>
+                    <span id="stepsCount" style="font-size: 0.75rem; color: var(--accent-primary);">0/13</span>
+                </div>
+                <ul class="nav-list" id="navList">
+                    <li><a href="#paso-0" class="nav-item" data-tag="c14"><span class="nav-item-left"><span class="nav-badge">00</span> Arquitectura CampusFlow</span><span class="nav-check" id="check-nav-0">✓</span></a></li>
+                    <li><a href="#paso-1" class="nav-item" data-tag="c14 c15"><span class="nav-item-left"><span class="nav-badge">01</span> pom.xml & Stripe SDK</span><span class="nav-check" id="check-nav-1">✓</span></a></li>
+                    <li><a href="#paso-2" class="nav-item" data-tag="c14 c15"><span class="nav-item-left"><span class="nav-badge">02</span> Base de Datos & Claves</span><span class="nav-check" id="check-nav-2">✓</span></a></li>
+                    <li><a href="#paso-3" class="nav-item" data-tag="c14"><span class="nav-item-left"><span class="nav-badge">03</span> Modelo: Usuarios, Perfiles, Cursos</span><span class="nav-check" id="check-nav-3">✓</span></a></li>
+                    <li><a href="#paso-4" class="nav-item" data-tag="c15"><span class="nav-item-left"><span class="nav-badge">04</span> Modelo: Pagos & Suscripciones</span><span class="nav-check" id="check-nav-4">✓</span></a></li>
+                    <li><a href="#paso-5" class="nav-item" data-tag="c14 c15"><span class="nav-item-left"><span class="nav-badge">05</span> Repositorios JPA</span><span class="nav-check" id="check-nav-5">✓</span></a></li>
+                    <li><a href="#paso-6" class="nav-item" data-tag="c14 c15"><span class="nav-item-left"><span class="nav-badge">06</span> Contratos DTO Seguros</span><span class="nav-check" id="check-nav-6">✓</span></a></li>
+                    <li><a href="#paso-7" class="nav-item" data-tag="security c14"><span class="nav-item-left"><span class="nav-badge">07</span> Seguridad JWT & Roles</span><span class="nav-check" id="check-nav-7">✓</span></a></li>
+                    <li><a href="#paso-8" class="nav-item" data-tag="c14"><span class="nav-item-left"><span class="nav-badge">08</span> Servicios Académicos</span><span class="nav-check" id="check-nav-8">✓</span></a></li>
+                    <li><a href="#paso-9" class="nav-item" data-tag="c15"><span class="nav-item-left"><span class="nav-badge">09</span> Stripe Service (Checkout)</span><span class="nav-check" id="check-nav-9">✓</span></a></li>
+                    <li><a href="#paso-10" class="nav-item" data-tag="c15"><span class="nav-item-left"><span class="nav-badge">10</span> Webhooks Seguros & Idempotencia</span><span class="nav-check" id="check-nav-10">✓</span></a></li>
+                    <li><a href="#paso-11" class="nav-item" data-tag="c14 c15"><span class="nav-item-left"><span class="nav-badge">11</span> Controladores REST</span><span class="nav-check" id="check-nav-11">✓</span></a></li>
+                    <li><a href="#paso-12" class="nav-item" data-tag="c15"><span class="nav-item-left"><span class="nav-badge">12</span> Pruebas Stripe CLI & Simulador</span><span class="nav-check" id="check-nav-12">✓</span></a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            <!-- Hero -->
+            <section class="hero-banner">
+                <h2 class="hero-title">CampusFlow: <em>Plataforma Educativa SaaS con Stripe</em></h2>
+                <p class="hero-subtitle">
+                    Esta guía integra la evolución completa trabajada en las <strong>Clases 14 y 15</strong> de Dev Senior. Aprenderás a construir el ecosistema educativo (Usuarios, Roles, Perfiles, Cursos e Inscripciones) y el modelo de monetización SaaS con <strong>Stripe Checkout Session</strong>, cobros únicos, suscripciones recurrentes y <strong>Webhooks asíncronos con verificación criptográfica e idempotencia</strong>.
+                </p>
+                <div class="hero-features">
+                    <div class="feature-box">
+                        <span class="icon">👥</span>
+                        <span class="title">Clase 14: Relaciones & Roles</span>
+                        <span class="desc">Instructor → Cursos (1:N), Estudiante ↔ Cursos (N:M con Inscripción) y RBAC (ADMIN, INSTRUCTOR, ESTUDIANTE).</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">💳</span>
+                        <span class="title">Clase 15: Stripe Checkout</span>
+                        <span class="desc">Pasarela alojada de Stripe con modos Payment y Subscription. No manipulamos tarjetas directamente (PCI-DSS compliant).</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">🛡️</span>
+                        <span class="title">Clase 15: Webhooks Seguros</span>
+                        <span class="desc">Activación del curso en base de datos únicamente cuando Stripe confirma el pago mediante webhook con firma HMAC SHA-256.</span>
+                    </div>
+                    <div class="feature-box">
+                        <span class="icon">⚡</span>
+                        <span class="title">Stripe CLI & Sandbox</span>
+                        <span class="desc">Pruebas locales mediante túnel de eventos sin exponer tu máquina a Internet.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Architecture Explorer -->
+            <section class="arch-section">
+                <div class="section-header">
+                    <div>
+                        <h3 class="section-title">🧭 Mapa de Arquitectura: Ciclo Síncrono y Bucle Asíncrono de Webhooks</h3>
+                        <p class="section-subtitle">Haz clic en cada bloque para entender la separación crítica entre la petición del usuario y la confirmación de Stripe</p>
+                    </div>
+                </div>
+                <div class="arch-diagram">
+                    <div class="arch-node" onclick="showArchDetail('client')">
+                        <div class="arch-node-step">1. Cliente</div>
+                        <div class="arch-node-name">Frontend / App</div>
+                        <div class="arch-node-desc">Solicita comprar curso</div>
+                        <span class="arch-node-badge">POST /api/pagos/checkout</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('backend')">
+                        <div class="arch-node-step">2. Backend</div>
+                        <div class="arch-node-name">StripeService</div>
+                        <div class="arch-node-desc">Crea Session en Stripe</div>
+                        <span class="arch-node-badge">Devuelve checkoutUrl</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('stripe_checkout')">
+                        <div class="arch-node-step">3. Pasarela</div>
+                        <div class="arch-node-name">Stripe Hosted Page</div>
+                        <div class="arch-node-desc">El usuario paga en Stripe</div>
+                        <span class="arch-node-badge">Tarjeta / ApplePay / GooglePay</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('webhook')">
+                        <div class="arch-node-step">4. Webhook</div>
+                        <div class="arch-node-name">Stripe Webhook Event</div>
+                        <div class="arch-node-desc">Evento firmado hacia Backend</div>
+                        <span class="arch-node-badge">checkout.session.completed</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('verification')">
+                        <div class="arch-node-step">5. Validación</div>
+                        <div class="arch-node-name">WebhookController</div>
+                        <div class="arch-node-desc">Verifica Stripe-Signature</div>
+                        <span class="arch-node-badge">Idempotencia & Estado</span>
+                    </div>
+                    <div class="arch-node" onclick="showArchDetail('activation')">
+                        <div class="arch-node-step">6. Activación</div>
+                        <div class="arch-node-name">InscripcionService</div>
+                        <div class="arch-node-desc">Guarda Inscripción en BD</div>
+                        <span class="arch-node-badge">MySQL `campus`</span>
+                    </div>
+                </div>
+                <div class="arch-detail-box" id="archDetailBox">
+                    <h4 id="archDetailTitle" style="color: var(--accent-primary); margin-bottom: 0.4rem;">Detalles de la Capa</h4>
+                    <p id="archDetailText" style="font-size: 0.88rem; color: var(--text-secondary);"></p>
+                </div>
+            </section>
+
+            <!-- PASO 0 -->
+            <section class="step-card" id="paso-0" data-tags="c14">
+                <div class="step-header" onclick="toggleStepBody(0)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-0" onclick="event.stopPropagation(); toggleStepCheck(0)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 00</span>
+                            <h3 class="step-title">Arquitectura CampusFlow & Setup Inicial</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 10 min</span>
+                                <span class="meta-tag">🎯 Clase 14: Contexto de Dominio</span>
+                                <span class="meta-tag">📦 com.devsenior.campusFlow</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-0">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-0">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>¿Qué es CampusFlow y qué resuelve?</strong>
+                            CampusFlow evoluciona el modelo básico hacia una plataforma educativa completa: relaciona <strong>Instructores con Cursos</strong> (1:N), <strong>Estudiantes con Cursos mediante Inscripciones</strong> (N:M con metadatos de progreso y fecha), y soporta monetización SaaS mediante cobros únicos y suscripciones.
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #fff;">1. Generación del Proyecto (Spring Initializr)</h4>
+                        <ul style="list-style-position: inside; font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            <li><strong>Project:</strong> Maven / Java 17</li>
+                            <li><strong>Spring Boot:</strong> 3.x</li>
+                            <li><strong>Group:</strong> <code>com.devsenior</code></li>
+                            <li><strong>Artifact:</strong> <code>campusFlow</code></li>
+                            <li><strong>Package Name:</strong> <code>com.devsenior.campusFlow</code></li>
+                            <li><strong>Dependencias iniciales:</strong> Spring Web, Spring Data JPA, MySQL Driver, Spring Security, Validation.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 style="margin-bottom: 0.5rem; color: #fff;">2. Clase Principal (CampusFlowApplication.java)</h4>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <div class="code-tabs"><button class="code-tab active">CampusFlowApplication.java</button></div>
+                                <div class="code-actions"><button class="copy-btn" onclick="copyCode('code-app-main')">📋 Copiar</button></div>
+                            </div>
+                            <div class="code-content active" id="code-app-main">
+                                <pre><code>package com.devsenior.campusFlow;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CampusFlowApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(CampusFlowApplication.class, args);
+    }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 1 -->
+            <section class="step-card" id="paso-1" data-tags="c14 c15">
+                <div class="step-header" onclick="toggleStepBody(1)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-1" onclick="event.stopPropagation(); toggleStepCheck(1)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 01</span>
+                            <h3 class="step-title">pom.xml: Spring Boot 3, JJWT 0.13 & Stripe SDK 33.4.2</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 5 min</span>
+                                <span class="meta-tag">🎯 Clase 15: SDK Oficial de Stripe</span>
+                                <span class="meta-tag">📄 pom.xml</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-1">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-1">
+                    <div class="callout callout-stripe">
+                        <span class="callout-icon">💳</span>
+                        <div class="callout-content">
+                            <strong>Incorporación de Stripe Java SDK (v33.4.2):</strong>
+                            En la Clase 15 incorporamos <code>com.stripe:stripe-java:33.4.2</code>. Esta librería oficial maneja la comunicación HTTPS con la API de Stripe, serializa los modelos de Checkout Session y, fundamentalmente, provee la utilidad criptográfica <code>Webhook.constructEvent</code> para validar firmas.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs"><button class="code-tab active">pom.xml</button></div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCode('code-pom-xml')">📋 Copiar pom.xml</button></div>
+                        </div>
+                        <div class="code-content active" id="code-pom-xml">
+                            <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.3.4&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+
+    &lt;groupId&gt;com.devsenior&lt;/groupId&gt;
+    &lt;artifactId&gt;campusFlow&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;campusFlow&lt;/name&gt;
+    &lt;description&gt;Plataforma Educativa SaaS con Spring Boot, JWT y Stripe&lt;/description&gt;
+
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+    &lt;/properties&gt;
+
+    &lt;dependencies&gt;
+        &lt;!-- 1. Spring Boot Web & MVC --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 2. Persistencia JPA con Hibernate --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 3. Conector MySQL --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 4. Spring Security 6+ --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 5. JJWT (0.13.0) para Tokens Stateless --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+            &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+            &lt;version&gt;0.13.0&lt;/version&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 6. Stripe Java SDK 33.4.2 (Clase 15) --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;com.stripe&lt;/groupId&gt;
+            &lt;artifactId&gt;stripe-java&lt;/artifactId&gt;
+            &lt;version&gt;33.4.2&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 7. Swagger OpenAPI UI --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+            &lt;artifactId&gt;springdoc-openapi-starter-webmvc-ui&lt;/artifactId&gt;
+            &lt;version&gt;2.6.0&lt;/version&gt;
+        &lt;/dependency&gt;
+
+        &lt;!-- 8. DevTools para recarga en desarrollo --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+            &lt;scope&gt;runtime&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 2 -->
+            <section class="step-card" id="paso-2" data-tags="c14 c15">
+                <div class="step-header" onclick="toggleStepBody(2)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-2" onclick="event.stopPropagation(); toggleStepCheck(2)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 02</span>
+                            <h3 class="step-title">Base de Datos MySQL (`campus`) & Claves de Stripe Sandbox</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 5 min</span>
+                                <span class="meta-tag">🎯 Conexión JDBC & Stripe Secrets</span>
+                                <span class="meta-tag">📄 application.properties</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-2">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-2">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">🗄️</span>
+                        <div class="callout-content">
+                            <strong>Creación de la base de datos `campus`:</strong>
+                            En MySQL Workbench o terminal ejecuta:<br>
+                            <code>CREATE DATABASE IF NOT EXISTS campus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</code>
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs"><button class="code-tab active">application.properties</button></div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCode('code-app-props')">📋 Copiar Properties</button></div>
+                        </div>
+                        <div class="code-content active" id="code-app-props">
+                            <pre><code># Nombre de la aplicación
+spring.application.name=campusFlow
+
+# Conexión MySQL CampusFlow
+spring.datasource.url=jdbc:mysql://localhost:3306/campus?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=Alpine123456
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Hibernate DDL & SQL Logs
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# Configuración de Claves Stripe Sandbox (Clase 15)
+# Reemplazar con tus claves de dashboard.stripe.com/test/apikeys
+stripe.api.key=sk_test_51PxxxxTU_CLAVE_SECRETA_STRIPE_TEST
+# Clave del Webhook local generada por Stripe CLI al ejecutar `stripe listen`
+stripe.webhook.secret=whsec_xxxxTU_WEBHOOK_SECRET_LOCAL
+
+# URL de retorno tras Checkout
+stripe.success.url=http://localhost:8080/checkout/success?session_id={CHECKOUT_SESSION_ID}
+stripe.cancel.url=http://localhost:8080/checkout/cancel
+
+# Swagger UI
+springdoc.swagger-ui.path=/swagger-ui.html</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 3 -->
+            <section class="step-card" id="paso-3" data-tags="c14">
+                <div class="step-header" onclick="toggleStepBody(3)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-3" onclick="event.stopPropagation(); toggleStepCheck(3)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 03</span>
+                            <h3 class="step-title">Modelo Académico: Usuarios, Perfiles, Cursos e Inscripciones</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 20 min</span>
+                                <span class="meta-tag">🎯 Clase 14: Relaciones 1:1, 1:N y N:M</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.model</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-3">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-3">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Relaciones JPA en CampusFlow (Clase 14):</strong>
+                            1. <code>Usuario ↔ Perfil</code>: Relación 1:1 compartiendo ciclo de vida.<br>
+                            2. <code>Usuario (Instructor) → Cursos</code>: Relación 1:N donde un docente dicta múltiples cursos.<br>
+                            3. <code>Estudiante ↔ Cursos</code>: Relación N:M modelada con la entidad intermedia <code>Inscripcion</code> para registrar fecha y estado.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-rol')">Rol.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-usuario')">Usuario.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-perfil')">Perfil.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-curso')">Curso.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-inscripcion')">Inscripcion.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-rol">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+public enum Rol {
+    ADMIN,
+    INSTRUCTOR,
+    ESTUDIANTE
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-usuario">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Perfil perfil;
+
+    @OneToMany(mappedBy = "instructor")
+    private List&lt;Curso&gt; cursosDictados = new ArrayList&lt;&gt;();
+
+    @OneToMany(mappedBy = "estudiante")
+    private List&lt;Inscripcion&gt; inscripciones = new ArrayList&lt;&gt;();
+
+    public Usuario() {}
+
+    public Usuario(String email, String password, Rol rol) {
+        this.email = email;
+        this.password = password;
+        this.rol = rol;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
+    public Perfil getPerfil() { return perfil; }
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
+        if (perfil != null) perfil.setUsuario(this);
+    }
+    public List&lt;Curso&gt; getCursosDictados() { return cursosDictados; }
+    public void setCursosDictados(List&lt;Curso&gt; cursosDictados) { this.cursosDictados = cursosDictados; }
+    public List&lt;Inscripcion&gt; getInscripciones() { return inscripciones; }
+    public void setInscripciones(List&lt;Inscripcion&gt; inscripciones) { this.inscripciones = inscripciones; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-perfil">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "perfiles")
+public class Perfil {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombreCompleto;
+    private String telefono;
+    private String biografia;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    public Perfil() {}
+
+    public Perfil(String nombreCompleto, String telefono, String biografia) {
+        this.nombreCompleto = nombreCompleto;
+        this.telefono = telefono;
+        this.biografia = biografia;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNombreCompleto() { return nombreCompleto; }
+    public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public String getBiografia() { return biografia; }
+    public void setBiografia(String biografia) { this.biografia = biografia; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-curso">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "cursos")
+public class Curso {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String titulo;
+
+    @Column(length = 1000)
+    private String descripcion;
+
+    @Column(nullable = false)
+    private BigDecimal precio;
+
+    // ID del Price en Stripe para pagos o suscripciones (Clase 15)
+    private String stripePriceId;
+
+    @ManyToOne
+    @JoinColumn(name = "instructor_id")
+    private Usuario instructor;
+
+    @OneToMany(mappedBy = "curso")
+    private List&lt;Inscripcion&gt; inscripciones = new ArrayList&lt;&gt;();
+
+    public Curso() {}
+
+    public Curso(String titulo, String descripcion, BigDecimal precio) {
+        this.titulo = titulo;
+        this.descripcion = descripcion;
+        this.precio = precio;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public BigDecimal getPrecio() { return precio; }
+    public void setPrecio(BigDecimal precio) { this.precio = precio; }
+    public String getStripePriceId() { return stripePriceId; }
+    public void setStripePriceId(String stripePriceId) { this.stripePriceId = stripePriceId; }
+    public Usuario getInstructor() { return instructor; }
+    public void setInstructor(Usuario instructor) { this.instructor = instructor; }
+    public List&lt;Inscripcion&gt; getInscripciones() { return inscripciones; }
+    public void setInscripciones(List&lt;Inscripcion&gt; inscripciones) { this.inscripciones = inscripciones; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-inscripcion">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "inscripciones")
+public class Inscripcion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "estudiante_id", nullable = false)
+    private Usuario estudiante;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
+
+    private LocalDateTime fechaInscripcion = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private EstadoInscripcion estado = EstadoInscripcion.ACTIVA;
+
+    public enum EstadoInscripcion {
+        ACTIVA,
+        CANCELADA
+    }
+
+    public Inscripcion() {}
+
+    public Inscripcion(Usuario estudiante, Curso curso) {
+        this.estudiante = estudiante;
+        this.curso = curso;
+        this.fechaInscripcion = LocalDateTime.now();
+        this.estado = EstadoInscripcion.ACTIVA;
+    }
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Usuario getEstudiante() { return estudiante; }
+    public void setEstudiante(Usuario estudiante) { this.estudiante = estudiante; }
+    public Curso getCurso() { return curso; }
+    public void setCurso(Curso curso) { this.curso = curso; }
+    public LocalDateTime getFechaInscripcion() { return fechaInscripcion; }
+    public void setFechaInscripcion(LocalDateTime fechaInscripcion) { this.fechaInscripcion = fechaInscripcion; }
+    public EstadoInscripcion getEstado() { return estado; }
+    public void setEstado(EstadoInscripcion estado) { this.estado = estado; }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 4 -->
+            <section class="step-card" id="paso-4" data-tags="c15">
+                <div class="step-header" onclick="toggleStepBody(4)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-4" onclick="event.stopPropagation(); toggleStepCheck(4)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 04</span>
+                            <h3 class="step-title">Modelo de Dominio de Pagos & Stripe SaaS (Clase 15)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Clase 15: Pago, Suscripcion, EstadoPago</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.model</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-4">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-4">
+                    <div class="callout callout-stripe">
+                        <span class="callout-icon">💳</span>
+                        <div class="callout-content">
+                            <strong>El diseño de persistencia de pagos en CampusFlow:</strong>
+                            No almacenamos tarjetas de crédito en MySQL por normatividad PCI-DSS. Almacenamos identificadores remotos de Stripe (<code>stripeSessionId</code>, <code>stripePaymentIntentId</code>, <code>stripeCustomerId</code>, <code>stripeSubscriptionId</code>) y rastreamos el ciclo de vida del pago (<code>PENDIENTE</code>, <code>PAGADO</code>, <code>FALLIDO</code>).
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-estado-pago')">EstadoPago.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-pago')">Pago.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-suscripcion')">Suscripcion.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-estado-pago">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+public enum EstadoPago {
+    PENDIENTE,
+    PAGADO,
+    FALLIDO
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-pago">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "pagos")
+public class Pago {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String stripeSessionId;
+
+    private String stripePaymentIntentId;
+    private String stripeCustomerId;
+
+    private BigDecimal monto;
+    private String moneda;
+
+    @Enumerated(EnumType.STRING)
+    private EstadoPago estado = EstadoPago.PENDIENTE;
+
+    @Enumerated(EnumType.STRING)
+    private TipoPago tipo = TipoPago.PAGO_UNICO;
+
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
+
+    public enum TipoPago {
+        PAGO_UNICO,
+        SUSCRIPCION
+    }
+
+    public Pago() {}
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getStripeSessionId() { return stripeSessionId; }
+    public void setStripeSessionId(String stripeSessionId) { this.stripeSessionId = stripeSessionId; }
+    public String getStripePaymentIntentId() { return stripePaymentIntentId; }
+    public void setStripePaymentIntentId(String stripePaymentIntentId) { this.stripePaymentIntentId = stripePaymentIntentId; }
+    public String getStripeCustomerId() { return stripeCustomerId; }
+    public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }
+    public BigDecimal getMonto() { return monto; }
+    public void setMonto(BigDecimal monto) { this.monto = monto; }
+    public String getMoneda() { return moneda; }
+    public void setMoneda(String moneda) { this.moneda = moneda; }
+    public EstadoPago getEstado() { return estado; }
+    public void setEstado(EstadoPago estado) { this.estado = estado; }
+    public TipoPago getTipo() { return tipo; }
+    public void setTipo(TipoPago tipo) { this.tipo = tipo; }
+    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(LocalDateTime fechaCreacion) { this.fechaCreacion = fechaCreacion; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public Curso getCurso() { return curso; }
+    public void setCurso(Curso curso) { this.curso = curso; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-suscripcion">
+                            <pre><code>package com.devsenior.campusFlow.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "suscripciones")
+public class Suscripcion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false)
+    private String stripeSubscriptionId;
+
+    private String stripeCustomerId;
+    private String estado; // active, past_due, canceled
+
+    private LocalDateTime fechaInicio;
+    private LocalDateTime fechaFin;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    public Suscripcion() {}
+
+    // Getters y Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getStripeSubscriptionId() { return stripeSubscriptionId; }
+    public void setStripeSubscriptionId(String stripeSubscriptionId) { this.stripeSubscriptionId = stripeSubscriptionId; }
+    public String getStripeCustomerId() { return stripeCustomerId; }
+    public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+    public LocalDateTime getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(LocalDateTime fechaInicio) { this.fechaInicio = fechaInicio; }
+    public LocalDateTime getFechaFin() { return fechaFin; }
+    public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 5 -->
+            <section class="step-card" id="paso-5" data-tags="c14 c15">
+                <div class="step-header" onclick="toggleStepBody(5)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-5" onclick="event.stopPropagation(); toggleStepCheck(5)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 05</span>
+                            <h3 class="step-title">Capa de Repositorios Spring Data JPA</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 10 min</span>
+                                <span class="meta-tag">🎯 Métodos derivados & Idempotencia</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.repository</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-5">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-5">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Consultas clave para la lógica de negocio y pagos:</strong>
+                            <code>findByEmail</code> para autenticación, <code>existsByEstudianteIdAndCursoId</code> para evitar inscripciones duplicadas, y <code>findByStripeSessionId</code> para garantizar <strong>idempotencia</strong> cuando Stripe reenvía eventos de webhook.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-repo-user')">UsuarioRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-curso')">CursoRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-insc')">InscripcionRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-pago')">PagoRepository.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-repo-susc')">SuscripcionRepository.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-repo-user">
+                            <pre><code>package com.devsenior.campusFlow.repository;
+
+import com.devsenior.campusFlow.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UsuarioRepository extends JpaRepository&lt;Usuario, Long&gt; {
+    Optional&lt;Usuario&gt; findByEmail(String email);
+    boolean existsByEmail(String email);
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-repo-curso">
+                            <pre><code>package com.devsenior.campusFlow.repository;
+
+import com.devsenior.campusFlow.model.Curso;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface CursoRepository extends JpaRepository&lt;Curso, Long&gt; {
+    List&lt;Curso&gt; findByInstructorId(Long instructorId);
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-repo-insc">
+                            <pre><code>package com.devsenior.campusFlow.repository;
+
+import com.devsenior.campusFlow.model.Inscripcion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface InscripcionRepository extends JpaRepository&lt;Inscripcion, Long&gt; {
+    List&lt;Inscripcion&gt; findByEstudianteId(Long estudianteId);
+    boolean existsByEstudianteIdAndCursoId(Long estudianteId, Long cursoId);
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-repo-pago">
+                            <pre><code>package com.devsenior.campusFlow.repository;
+
+import com.devsenior.campusFlow.model.Pago;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface PagoRepository extends JpaRepository&lt;Pago, Long&gt; {
+    Optional&lt;Pago&gt; findByStripeSessionId(String stripeSessionId);
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-repo-susc">
+                            <pre><code>package com.devsenior.campusFlow.repository;
+
+import com.devsenior.campusFlow.model.Suscripcion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface SuscripcionRepository extends JpaRepository&lt;Suscripcion, Long&gt; {
+    Optional&lt;Suscripcion&gt; findByStripeSubscriptionId(String stripeSubscriptionId);
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 6 -->
+            <section class="step-card" id="paso-6" data-tags="c14 c15">
+                <div class="step-header" onclick="toggleStepBody(6)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-6" onclick="event.stopPropagation(); toggleStepCheck(6)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 06</span>
+                            <h3 class="step-title">Contratos de la API (DTOs) & Blindaje de Datos</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Clase 14: Respuestas sin Contraseñas</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.dto</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-6">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-6">
+                    <div class="callout callout-tip">
+                        <span class="callout-icon">🛡️</span>
+                        <div class="callout-content">
+                            <strong>Principio de Mínima Exposición:</strong>
+                            1. <code>UsuarioDTO</code> y <code>UsuarioResponseDTO</code> excluyen la contraseña (ni en texto plano ni hasheada).<br>
+                            2. <code>CursoDTO</code> aplanar los datos del instructor (solo nombre) evitando referencias circulares con Jackson.<br>
+                            3. <code>CheckoutResponseDTO</code> contiene la URL segura donde el frontend debe redirigir al usuario para pagar en Stripe.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-dto-auth')">AuthDTOs.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-usuario')">UsuarioDTO.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-curso')">CursoDTO.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-dto-checkout')">CheckoutDTOs.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-dto-auth">
+                            <pre><code>package com.devsenior.campusFlow.dto;
+
+public class AuthRequest {
+    private String email;
+    private String password;
+
+    public AuthRequest() {}
+    public AuthRequest(String email, String password) { this.email = email; this.password = password; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+}
+
+// AuthResponse.java
+class AuthResponse {
+    private String token;
+    private String email;
+    private String rol;
+
+    public AuthResponse(String token, String email, String rol) {
+        this.token = token;
+        this.email = email;
+        this.rol = rol;
+    }
+    public String getToken() { return token; }
+    public String getEmail() { return email; }
+    public String getRol() { return rol; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-dto-usuario">
+                            <pre><code>package com.devsenior.campusFlow.dto;
+
+import com.devsenior.campusFlow.model.Usuario;
+
+public class UsuarioDTO {
+    private Long id;
+    private String email;
+    private String rol;
+    private String nombreCompleto;
+    private String telefono;
+
+    public UsuarioDTO(Usuario u) {
+        this.id = u.getId();
+        this.email = u.getEmail();
+        this.rol = u.getRol().name();
+        if (u.getPerfil() != null) {
+            this.nombreCompleto = u.getPerfil().getNombreCompleto();
+            this.telefono = u.getPerfil().getTelefono();
+        }
+    }
+
+    public Long getId() { return id; }
+    public String getEmail() { return email; }
+    public String getRol() { return rol; }
+    public String getNombreCompleto() { return nombreCompleto; }
+    public String getTelefono() { return telefono; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-dto-curso">
+                            <pre><code>package com.devsenior.campusFlow.dto;
+
+import com.devsenior.campusFlow.model.Curso;
+import java.math.BigDecimal;
+
+public class CursoDTO {
+    private Long id;
+    private String titulo;
+    private String descripcion;
+    private BigDecimal precio;
+    private String instructor;
+
+    public CursoDTO(Curso c) {
+        this.id = c.getId();
+        this.titulo = c.getTitulo();
+        this.descripcion = c.getDescripcion();
+        this.precio = c.getPrecio();
+        this.instructor = (c.getInstructor() != null && c.getInstructor().getPerfil() != null)
+                ? c.getInstructor().getPerfil().getNombreCompleto()
+                : (c.getInstructor() != null ? c.getInstructor().getEmail() : "Sin asignar");
+    }
+
+    public Long getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public String getDescripcion() { return descripcion; }
+    public BigDecimal getPrecio() { return precio; }
+    public String getInstructor() { return instructor; }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-dto-checkout">
+                            <pre><code>package com.devsenior.campusFlow.dto;
+
+public class CheckoutRequestDTO {
+    private Long cursoId;
+    private String stripePriceId; // Opcional para suscripción recurrente
+
+    public Long getCursoId() { return cursoId; }
+    public void setCursoId(Long cursoId) { this.cursoId = cursoId; }
+    public String getStripePriceId() { return stripePriceId; }
+    public void setStripePriceId(String stripePriceId) { this.stripePriceId = stripePriceId; }
+}
+
+// CheckoutResponseDTO.java
+class CheckoutResponseDTO {
+    private String sessionId;
+    private String checkoutUrl;
+
+    public CheckoutResponseDTO(String sessionId, String checkoutUrl) {
+        this.sessionId = sessionId;
+        this.checkoutUrl = checkoutUrl;
+    }
+    public String getSessionId() { return sessionId; }
+    public String getCheckoutUrl() { return checkoutUrl; }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 7 -->
+            <section class="step-card" id="paso-7" data-tags="security c14 c15">
+                <div class="step-header" onclick="toggleStepBody(7)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-7" onclick="event.stopPropagation(); toggleStepCheck(7)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 07</span>
+                            <h3 class="step-title">Seguridad JWT, Roles RBAC & Exclusión del Webhook de Stripe</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 20 min</span>
+                                <span class="meta-tag">🎯 Exclusión crítica de /api/webhooks/stripe</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.security</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-7">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-7">
+                    <div class="callout callout-warning">
+                        <span class="callout-icon">⚠️</span>
+                        <div class="callout-content">
+                            <strong>¡REGLA DE ORO DE SEGURIDAD PARA STRIPE (Clase 15)!:</strong>
+                            El endpoint <code>/api/webhooks/stripe</code> <strong>DEBE SER PERMITIDO SIN JWT</strong> (<code>.permitAll()</code>) en <code>SecurityConfig</code>. Stripe llama a tu servidor de forma autónoma sin credenciales de usuario. La autenticidad se verifica en el controlador mediante la firma criptográfica <code>Stripe-Signature</code>.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-sec-conf')">SecurityConfig.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-sec-jwt')">JwtService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-sec-filter')">JwtAuthFilter.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-sec-userdet')">UsuarioDetailsService.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-sec-conf">
+                            <pre><code>package com.devsenior.campusFlow.security;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                // 1. Rutas públicas de autenticación y documentación
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+
+                // 2. Consulta pública de cursos (Catálogo)
+                .requestMatchers(HttpMethod.GET, "/api/cursos/**").permitAll()
+
+                // 3. ¡CRÍTICO CLASE 15! Endpoint del webhook de Stripe (Público de JWT, protegido por firma)
+                .requestMatchers("/api/webhooks/stripe").permitAll()
+
+                // 4. Gestión de cursos: solo INSTRUCTOR y ADMIN
+                .requestMatchers(HttpMethod.POST, "/api/cursos/**").hasAnyRole("ADMIN", "INSTRUCTOR")
+                .requestMatchers(HttpMethod.PUT, "/api/cursos/**").hasAnyRole("ADMIN", "INSTRUCTOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/cursos/**").hasRole("ADMIN")
+
+                // 5. Pagos: cualquier usuario autenticado (Estudiante) puede crear checkout
+                .requestMatchers("/api/pagos/checkout/**").authenticated()
+
+                // 6. Rutas de administración
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                // Cualquier otra petición debe estar autenticada
+                .anyRequest().authenticated()
+            )
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-sec-jwt">
+                            <pre><code>package com.devsenior.campusFlow.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Service
+public class JwtService {
+
+    // Clave secreta HMAC-SHA de al menos 256 bits (32 caracteres)
+    private final SecretKey clave = Keys.hmacShaKeyFor(
+            "clave-secreta-campusflow-desarrollo-sabados-2026".getBytes());
+
+    private final long expiracionMs = 1000 * 60 * 60 * 4; // 4 horas
+
+    public String generarToken(String email, String rol) {
+        Date ahora = new Date();
+        Date expira = new Date(ahora.getTime() + expiracionMs);
+        return Jwts.builder()
+                .subject(email)
+                .claim("rol", rol)
+                .issuedAt(ahora)
+                .expiration(expira)
+                .signWith(clave)
+                .compact();
+    }
+
+    public String extraerEmail(String token) {
+        return parsearClaims(token).getSubject();
+    }
+
+    public boolean esValido(String token) {
+        try {
+            parsearClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Claims parsearClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(clave)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-sec-filter">
+                            <pre><code>package com.devsenior.campusFlow.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private final JwtService jwtService;
+    private final UsuarioDetailsService usuarioDetailsService;
+
+    public JwtAuthFilter(JwtService jwtService, UsuarioDetailsService usuarioDetailsService) {
+        this.jwtService = jwtService;
+        this.usuarioDetailsService = usuarioDetailsService;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        // Si es el webhook de Stripe, pasar de largo sin validar JWT
+        if (request.getRequestURI().startsWith("/api/webhooks/stripe")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String header = request.getHeader("Authorization");
+
+        if (header == null || !header.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = header.substring(7);
+
+        if (jwtService.esValido(token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            String email = jwtService.extraerEmail(token);
+            UserDetails userDetails = usuarioDetailsService.loadUserByUsername(email);
+
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-sec-userdet">
+                            <pre><code>package com.devsenior.campusFlow.security;
+
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioDetailsService implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+
+    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario u = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+
+        return User.withUsername(u.getEmail())
+                .password(u.getPassword())
+                .roles(u.getRol().name())
+                .build();
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 8 -->
+            <section class="step-card" id="paso-8" data-tags="c14">
+                <div class="step-header" onclick="toggleStepBody(8)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-8" onclick="event.stopPropagation(); toggleStepCheck(8)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 08</span>
+                            <h3 class="step-title">Servicios Académicos: Cursos e Inscripciones (Clase 14)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Lógica de Dominio y Matriculación</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.service</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-8">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-8">
+                    <div class="callout callout-why">
+                        <span class="callout-icon">💡</span>
+                        <div class="callout-content">
+                            <strong>Inscripciones controladas:</strong>
+                            El servicio <code>InscripcionService</code> verifica con <code>existsByEstudianteIdAndCursoId</code> que el estudiante no esté ya matriculado, evitando registros duplicados.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-srv-auth')">AuthService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-srv-curso')">CursoService.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-srv-insc')">InscripcionService.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-srv-auth">
+                            <pre><code>package com.devsenior.campusFlow.service;
+
+import com.devsenior.campusFlow.dto.AuthRequest;
+import com.devsenior.campusFlow.dto.AuthResponse;
+import com.devsenior.campusFlow.model.Perfil;
+import com.devsenior.campusFlow.model.Rol;
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import com.devsenior.campusFlow.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    public AuthService(UsuarioRepository usuarioRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtService jwtService) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    public AuthResponse registrar(AuthRequest request, Rol rol, String nombreCompleto) {
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("El email ya se encuentra registrado.");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.getEmail());
+        usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setRol(rol != null ? rol : Rol.ESTUDIANTE);
+
+        Perfil perfil = new Perfil(nombreCompleto, "", "");
+        usuario.setPerfil(perfil);
+
+        usuarioRepository.save(usuario);
+
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token, usuario.getEmail(), usuario.getRol().name());
+    }
+
+    public AuthResponse login(AuthRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        Usuario usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
+        String token = jwtService.generarToken(usuario.getEmail(), usuario.getRol().name());
+        return new AuthResponse(token, usuario.getEmail(), usuario.getRol().name());
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-srv-curso">
+                            <pre><code>package com.devsenior.campusFlow.service;
+
+import com.devsenior.campusFlow.model.Curso;
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.CursoRepository;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+@Service
+public class CursoService {
+
+    private final CursoRepository cursoRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public CursoService(CursoRepository cursoRepository, UsuarioRepository usuarioRepository) {
+        this.cursoRepository = cursoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    public List&lt;Curso&gt; listarCursos() {
+        return cursoRepository.findAll();
+    }
+
+    public Curso obtenerPorId(Long id) {
+        return cursoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado con ID: " + id));
+    }
+
+    public Curso crearCurso(Curso curso, Long instructorId) {
+        if (instructorId != null) {
+            Usuario instructor = usuarioRepository.findById(instructorId)
+                    .orElseThrow(() -> new IllegalArgumentException("Instructor no encontrado"));
+            curso.setInstructor(instructor);
+        }
+        return cursoRepository.save(curso);
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-srv-insc">
+                            <pre><code>package com.devsenior.campusFlow.service;
+
+import com.devsenior.campusFlow.model.Curso;
+import com.devsenior.campusFlow.model.Inscripcion;
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.CursoRepository;
+import com.devsenior.campusFlow.repository.InscripcionRepository;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class InscripcionService {
+
+    private final InscripcionRepository inscripcionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CursoRepository cursoRepository;
+
+    public InscripcionService(InscripcionRepository inscripcionRepository,
+                              UsuarioRepository usuarioRepository,
+                              CursoRepository cursoRepository) {
+        this.inscripcionRepository = inscripcionRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.cursoRepository = cursoRepository;
+    }
+
+    @Transactional
+    public Inscripcion inscribirEstudiante(Long estudianteId, Long cursoId) {
+        if (inscripcionRepository.existsByEstudianteIdAndCursoId(estudianteId, cursoId)) {
+            // Idempotente: si ya está inscrito, no duplicar
+            return inscripcionRepository.findByEstudianteId(estudianteId).stream()
+                    .filter(i -> i.getCurso().getId().equals(cursoId))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        Usuario estudiante = usuarioRepository.findById(estudianteId)
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
+
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
+
+        Inscripcion nuevaInscripcion = new Inscripcion(estudiante, curso);
+        return inscripcionRepository.save(nuevaInscripcion);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 9 -->
+            <section class="step-card" id="paso-9" data-tags="c15">
+                <div class="step-header" onclick="toggleStepBody(9)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-9" onclick="event.stopPropagation(); toggleStepCheck(9)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 09</span>
+                            <h3 class="step-title">Integración de Stripe: StripeService & Checkout Sessions (Clase 15)</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 20 min</span>
+                                <span class="meta-tag">🎯 Modo PAYMENT y SUBSCRIPTION</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.service</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-9">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-9">
+                    <div class="callout callout-stripe">
+                        <span class="callout-icon">💳</span>
+                        <div class="callout-content">
+                            <strong>¿Cómo funciona Stripe Checkout?</strong>
+                            El backend invoca <code>Session.create(params)</code> enviando los items a cobrar y los metadatos (ID de curso y correo del alumno). Stripe genera una URL segura alojada (<code>session.getUrl()</code>). El usuario ingresa sus datos bancarios directamente en los servidores de Stripe.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-stripe-cfg')">StripeConfig.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-stripe-srv')">StripeService.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-stripe-cfg">
+                            <pre><code>package com.devsenior.campusFlow.config;
+
+import com.stripe.Stripe;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class StripeConfig {
+
+    @Value("${stripe.api.key}")
+    private String apiKey;
+
+    @PostConstruct
+    public void init() {
+        // Inicializa la clave de Stripe globalmente para el SDK oficial
+        Stripe.apiKey = this.apiKey;
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-stripe-srv">
+                            <pre><code>package com.devsenior.campusFlow.service;
+
+import com.devsenior.campusFlow.dto.CheckoutResponseDTO;
+import com.devsenior.campusFlow.model.Curso;
+import com.devsenior.campusFlow.model.EstadoPago;
+import com.devsenior.campusFlow.model.Pago;
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.CursoRepository;
+import com.devsenior.campusFlow.repository.PagoRepository;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+
+@Service
+public class StripeService {
+
+    private final CursoRepository cursoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PagoRepository pagoRepository;
+
+    @Value("${stripe.success.url}")
+    private String successUrl;
+
+    @Value("${stripe.cancel.url}")
+    private String cancelUrl;
+
+    public StripeService(CursoRepository cursoRepository,
+                         UsuarioRepository usuarioRepository,
+                         PagoRepository pagoRepository) {
+        this.cursoRepository = cursoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.pagoRepository = pagoRepository;
+    }
+
+    /**
+     * Crea Checkout Session para compra única de un curso individual (Mode.PAYMENT)
+     */
+    public CheckoutResponseDTO crearCheckoutPagoUnico(Long cursoId, String userEmail) throws StripeException {
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(() -> new IllegalArgumentException("Curso no encontrado"));
+
+        Usuario usuario = usuarioRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        // Monto en centavos (e.g. 50.00 USD -> 5000 centavos)
+        long montoCentavos = curso.getPrecio().multiply(new BigDecimal(100)).longValue();
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(successUrl)
+                .setCancelUrl(cancelUrl)
+                .setCustomerEmail(userEmail)
+                // Metadatos cruciales: Stripe los devolverá en el webhook
+                .putMetadata("cursoId", String.valueOf(curso.getId()))
+                .putMetadata("usuarioEmail", userEmail)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency("usd")
+                                                .setUnitAmount(montoCentavos)
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName(curso.getTitulo())
+                                                                .setDescription(curso.getDescripcion())
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                )
+                .build();
+
+        Session session = Session.create(params);
+
+        // Guardamos el registro de pago en estado PENDIENTE
+        Pago pago = new Pago();
+        pago.setStripeSessionId(session.getId());
+        pago.setMonto(curso.getPrecio());
+        pago.setMoneda("usd");
+        pago.setEstado(EstadoPago.PENDIENTE);
+        pago.setTipo(Pago.TipoPago.PAGO_UNICO);
+        pago.setUsuario(usuario);
+        pago.setCurso(curso);
+        pagoRepository.save(pago);
+
+        return new CheckoutResponseDTO(session.getId(), session.getUrl());
+    }
+
+    /**
+     * Crea Checkout Session para Suscripción mensual al Campus (Mode.SUBSCRIPTION)
+     */
+    public CheckoutResponseDTO crearCheckoutSuscripcion(String stripePriceId, String userEmail) throws StripeException {
+        Usuario usuario = usuarioRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
+                .setSuccessUrl(successUrl)
+                .setCancelUrl(cancelUrl)
+                .setCustomerEmail(userEmail)
+                .putMetadata("tipo", "SUSCRIPCION")
+                .putMetadata("usuarioEmail", userEmail)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPrice(stripePriceId) // ID del Price recurrente creado en el Dashboard de Stripe
+                                .build()
+                )
+                .build();
+
+        Session session = Session.create(params);
+        return new CheckoutResponseDTO(session.getId(), session.getUrl());
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 10 -->
+            <section class="step-card" id="paso-10" data-tags="c15">
+                <div class="step-header" onclick="toggleStepBody(10)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-10" onclick="event.stopPropagation(); toggleStepCheck(10)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 10</span>
+                            <h3 class="step-title">Webhooks Seguros de Stripe, Verificación de Firma & Idempotencia</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 20 min</span>
+                                <span class="meta-tag">🎯 Firma Stripe-Signature & Webhook.constructEvent</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.controller</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-10">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-10">
+                    <div class="callout callout-warning">
+                        <span class="callout-icon">🚨</span>
+                        <div class="callout-content">
+                            <strong>¡Cuidado con el Body Parsing en Spring Boot! (Clase 15)</strong>
+                            Para verificar la firma HMAC con <code>Webhook.constructEvent(payload, sigHeader, secret)</code>, el parámetro <code>payload</code> debe ser el <strong>String RAW (cuerpo sin transformar)</strong> recibido directamente de la petición HTTP. Nunca uses un objeto DTO como <code>@RequestBody Map</code> o <code>@RequestBody JsonNode</code> en el método del controlador, porque la re-serialización de JSON altera los bytes exactos y la firma fallará siempre.
+                        </div>
+                    </div>
+
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active">StripeWebhookController.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCode('code-webhook-ctrl')">📋 Copiar Webhook</button></div>
+                        </div>
+                        <div class="code-content active" id="code-webhook-ctrl">
+                            <pre><code>package com.devsenior.campusFlow.controller;
+
+import com.devsenior.campusFlow.model.EstadoPago;
+import com.devsenior.campusFlow.model.Pago;
+import com.devsenior.campusFlow.model.Usuario;
+import com.devsenior.campusFlow.repository.PagoRepository;
+import com.devsenior.campusFlow.repository.UsuarioRepository;
+import com.devsenior.campusFlow.service.InscripcionService;
+import com.stripe.exception.SignatureVerificationException;
+import com.stripe.model.Event;
+import com.stripe.model.checkout.Session;
+import com.stripe.net.Webhook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/webhooks/stripe")
+public class StripeWebhookController {
+
+    private final PagoRepository pagoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final InscripcionService inscripcionService;
+
+    @Value("${stripe.webhook.secret}")
+    private String webhookSecret;
+
+    public StripeWebhookController(PagoRepository pagoRepository,
+                                   UsuarioRepository usuarioRepository,
+                                   InscripcionService inscripcionService) {
+        this.pagoRepository = pagoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.inscripcionService = inscripcionService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;String&gt; handleStripeEvent(
+            @RequestBody String payload,
+            @RequestHeader("Stripe-Signature") String sigHeader) {
+
+        Event event;
+
+        // 1. Verificación criptográfica de la firma del webhook
+        try {
+            event = Webhook.constructEvent(payload, sigHeader, webhookSecret);
+        } catch (SignatureVerificationException e) {
+            System.err.println("Fallo de verificación de firma del webhook: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Firma inválida");
+        } catch (Exception e) {
+            System.err.println("Error procesando payload: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error de formato");
+        }
+
+        // 2. Procesamiento según el tipo de evento
+        switch (event.getType()) {
+            case "checkout.session.completed":
+                Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
+                if (session != null) {
+                    procesarPagoCompletado(session);
+                }
+                break;
+
+            case "customer.subscription.deleted":
+                // Aquí se desactiva el acceso a la suscripción si el usuario canceló
+                System.out.println("Suscripción cancelada en Stripe.");
+                break;
+
+            default:
+                System.out.println("Evento no manejado: " + event.getType());
+        }
+
+        // Siempre responder 200 OK a Stripe para acusar recibo
+        return ResponseEntity.ok("Evento recibido exitosamente");
+    }
+
+    private void procesarPagoCompletado(Session session) {
+        String sessionId = session.getId();
+        String customerId = session.getCustomer();
+        String paymentIntentId = session.getPaymentIntent();
+
+        // Idempotencia: Verificar si el pago ya fue procesado
+        Pago pago = pagoRepository.findByStripeSessionId(sessionId).orElse(null);
+
+        if (pago == null) {
+            System.err.println("No se encontró registro local para el SessionId: " + sessionId);
+            return;
+        }
+
+        if (pago.getEstado() == EstadoPago.PAGADO) {
+            // Ya fue procesado en un reintento anterior de webhook
+            System.out.println("Pago ya procesado previamente (Idempotente): " + sessionId);
+            return;
+        }
+
+        // Actualizamos estado de pago a PAGADO
+        pago.setEstado(EstadoPago.PAGADO);
+        pago.setStripeCustomerId(customerId);
+        pago.setStripePaymentIntentId(paymentIntentId);
+        pagoRepository.save(pago);
+
+        // Activación del curso al estudiante
+        if (pago.getCurso() != null && pago.getUsuario() != null) {
+            inscripcionService.inscribirEstudiante(pago.getUsuario().getId(), pago.getCurso().getId());
+            System.out.println("Inscripción activada con éxito para: " + pago.getUsuario().getEmail()
+                    + " en el curso: " + pago.getCurso().getTitulo());
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 11 -->
+            <section class="step-card" id="paso-11" data-tags="c14 c15">
+                <div class="step-header" onclick="toggleStepBody(11)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-11" onclick="event.stopPropagation(); toggleStepCheck(11)">
+                        <div class="step-title-area">
+                            <span class="step-badge">Paso 11</span>
+                            <h3 class="step-title">Controladores REST: Auth, Cursos y Checkout</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Endpoints expuestos al Frontend</span>
+                                <span class="meta-tag">📁 com.devsenior.campusFlow.controller</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-11">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-11">
+                    <div class="code-container">
+                        <div class="code-header">
+                            <div class="code-tabs">
+                                <button class="code-tab active" onclick="switchTab(this, 'code-ctrl-auth')">AuthController.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-ctrl-curso')">CursoController.java</button>
+                                <button class="code-tab" onclick="switchTab(this, 'code-ctrl-checkout')">CheckoutController.java</button>
+                            </div>
+                            <div class="code-actions"><button class="copy-btn" onclick="copyCurrentTabCode(this)">📋 Copiar</button></div>
+                        </div>
+
+                        <div class="code-content active" id="code-ctrl-auth">
+                            <pre><code>package com.devsenior.campusFlow.controller;
+
+import com.devsenior.campusFlow.dto.AuthRequest;
+import com.devsenior.campusFlow.dto.AuthResponse;
+import com.devsenior.campusFlow.model.Rol;
+import com.devsenior.campusFlow.service.AuthService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping("/register")
+    public AuthResponse registrar(@RequestBody AuthRequest request,
+                                  @RequestParam(required = false, defaultValue = "ESTUDIANTE") Rol rol,
+                                  @RequestParam(required = false, defaultValue = "Estudiante Campus") String nombre) {
+        return authService.registrar(request, rol, nombre);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@RequestBody AuthRequest request) {
+        return authService.login(request);
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-ctrl-curso">
+                            <pre><code>package com.devsenior.campusFlow.controller;
+
+import com.devsenior.campusFlow.dto.CursoDTO;
+import com.devsenior.campusFlow.model.Curso;
+import com.devsenior.campusFlow.service.CursoService;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/cursos")
+public class CursoController {
+
+    private final CursoService cursoService;
+
+    public CursoController(CursoService cursoService) {
+        this.cursoService = cursoService;
+    }
+
+    @GetMapping
+    public List&lt;CursoDTO&gt; listar() {
+        return cursoService.listarCursos().stream()
+                .map(CursoDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping
+    public CursoDTO crear(@RequestBody Curso curso, @RequestParam(required = false) Long instructorId) {
+        Curso nuevo = cursoService.crearCurso(curso, instructorId);
+        return new CursoDTO(nuevo);
+    }
+}</code></pre>
+                        </div>
+
+                        <div class="code-content" id="code-ctrl-checkout">
+                            <pre><code>package com.devsenior.campusFlow.controller;
+
+import com.devsenior.campusFlow.dto.CheckoutRequestDTO;
+import com.devsenior.campusFlow.dto.CheckoutResponseDTO;
+import com.devsenior.campusFlow.service.StripeService;
+import com.stripe.exception.StripeException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/pagos/checkout")
+public class CheckoutController {
+
+    private final StripeService stripeService;
+
+    public CheckoutController(StripeService stripeService) {
+        this.stripeService = stripeService;
+    }
+
+    @PostMapping("/pago-unico")
+    public CheckoutResponseDTO checkoutPagoUnico(
+            @RequestBody CheckoutRequestDTO request,
+            Authentication authentication) throws StripeException {
+
+        String userEmail = authentication.getName();
+        return stripeService.crearCheckoutPagoUnico(request.getCursoId(), userEmail);
+    }
+
+    @PostMapping("/suscripcion")
+    public CheckoutResponseDTO checkoutSuscripcion(
+            @RequestBody CheckoutRequestDTO request,
+            Authentication authentication) throws StripeException {
+
+        String userEmail = authentication.getName();
+        return stripeService.crearCheckoutSuscripcion(request.getStripePriceId(), userEmail);
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PASO 12 -->
+            <section class="step-card" id="paso-12" data-tags="c15">
+                <div class="step-header" onclick="toggleStepBody(12)">
+                    <div class="step-header-left">
+                        <input type="checkbox" class="step-checkbox" id="check-step-12" onclick="event.stopPropagation(); toggleStepCheck(12)">
+                        <div class="step-title-area">
+                            <span class="step-badge step-badge-stripe">Paso 12</span>
+                            <h3 class="step-title">Pruebas con Stripe CLI & Simulador Interactivo de Endpoints</h3>
+                            <div class="step-meta">
+                                <span class="meta-tag">⏱️ 15 min</span>
+                                <span class="meta-tag">🎯 Sandbox Local & Simulación</span>
+                                <span class="meta-tag">🧪 stripe listen & webhooks</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-header-actions">
+                        <button class="toggle-btn" id="toggle-btn-12">▼</button>
+                    </div>
+                </div>
+                <div class="step-body" id="step-body-12">
+                    <div class="callout callout-stripe">
+                        <span class="callout-icon">💻</span>
+                        <div class="callout-content">
+                            <strong>Comandos esenciales de Stripe CLI para desarrollo local (Clase 15):</strong><br>
+                            1. Iniciar sesión: <code>stripe login</code><br>
+                            2. Abrir túnel hacia tu backend: <code>stripe listen --forward-to localhost:8080/api/webhooks/stripe</code><br>
+                            3. Copia el secreto que muestra la consola (<code>whsec_...</code>) y ponlo en <code>stripe.webhook.secret</code>.<br>
+                            4. Disparar un evento de prueba en otra terminal: <code>stripe trigger checkout.session.completed</code>
+                        </div>
+                    </div>
+
+                    <!-- Interactive HTTP Simulator -->
+                    <div class="api-simulator">
+                        <div class="section-header">
+                            <div>
+                                <h4 class="section-title">🧪 Simulador Interactivo de Endpoints de CampusFlow</h4>
+                                <p class="section-subtitle">Selecciona una operación y presiona "Ejecutar Petición Simulada"</p>
+                            </div>
+                        </div>
+
+                        <div class="sim-grid">
+                            <div class="sim-panel">
+                                <div class="sim-title">
+                                    <span>Petición (Request)</span>
+                                    <span id="simMethodBadge" class="method-badge method-post">POST</span>
+                                </div>
+                                <select id="endpointSelect" class="endpoint-selector" onchange="updateSimRequest()">
+                                    <option value="register">POST /api/auth/register (Registro Estudiante)</option>
+                                    <option value="login">POST /api/auth/login (Iniciar Sesión JWT)</option>
+                                    <option value="get_cursos">GET /api/cursos (Catálogo Público)</option>
+                                    <option value="post_checkout">POST /api/pagos/checkout/pago-unico (Crear Sesión Stripe)</option>
+                                    <option value="post_webhook_ok">POST /api/webhooks/stripe (Evento Stripe Válido - Activación)</option>
+                                    <option value="post_webhook_bad_sig">POST /api/webhooks/stripe (Firma Inválida - 400 Bad Request)</option>
+                                </select>
+
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Headers:</label>
+                                    <pre id="simHeaders" style="padding: 0.6rem; font-size: 0.78rem; border: 1px solid var(--border-highlight); border-radius: 4px;"><code>Content-Type: application/json</code></pre>
+                                </div>
+
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Request Body:</label>
+                                    <textarea id="simBody" style="width: 100%; height: 110px; background: var(--bg-code); color: #a7f3d0; font-family: var(--font-mono); font-size: 0.8rem; border: 1px solid var(--border-highlight); border-radius: 4px; padding: 0.6rem; outline: none;"></textarea>
+                                </div>
+
+                                <button class="btn-run" onclick="executeSimulatedRequest()">⚡ Ejecutar Petición Simulada</button>
+                            </div>
+
+                            <div class="sim-panel">
+                                <div class="sim-title">
+                                    <span>Respuesta (Response)</span>
+                                    <span id="simStatusBadge" style="font-size: 0.8rem; font-weight: 700; color: var(--accent-green);">200 OK</span>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.78rem; color: var(--text-secondary); display: block; margin-bottom: 0.3rem;">Response Body (JSON):</label>
+                                    <pre id="simResponse" style="height: 220px; overflow-y: auto; background: var(--bg-code); padding: 0.75rem; border-radius: 4px; border: 1px solid var(--border-highlight); font-size: 0.8rem; color: #f8fafc;"></pre>
+                                </div>
+                                <div id="simExplanation" style="font-size: 0.8rem; color: var(--accent-primary); background: rgba(56, 189, 248, 0.1); padding: 0.6rem; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FAQ & Troubleshooting -->
+                    <div style="margin-top: 1.5rem;">
+                        <h4 style="color: #fff; margin-bottom: 1rem;">🛠️ Preguntas Frecuentes y Solución de Errores (Clases 14 y 15)</h4>
+                        
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>1. ¿Por qué el webhook de Stripe arroja SignatureVerificationException?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                Ocurre principalmente por dos razones: (1) El <code>webhookSecret</code> configurado en <code>application.properties</code> no coincide con el secret del túnel actual emitido por <code>stripe listen</code> (cada vez que inicias un nuevo webhook local con Stripe CLI se genera un <code>whsec_...</code> específico). (2) En el controlador recibiste un objeto deserializado en lugar del <code>String payload</code> en crudo; cualquier reordenamiento de espacios en el JSON altera la firma hash HMAC SHA-256.
+                            </div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>2. ¿Por qué Stripe Webhook recibe 403 Forbidden o 401 Unauthorized?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                En <code>SecurityConfig.java</code> debes asegurarte de que la regla <code>.requestMatchers("/api/webhooks/stripe").permitAll()</code> esté colocada antes de <code>.anyRequest().authenticated()</code>, y en <code>JwtAuthFilter.java</code> debes agregar una excepción temprana para saltar el filtro JWT cuando la URI comience con <code>/api/webhooks/stripe</code>.
+                            </div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-question">
+                                <span>3. ¿Cómo evitar cobros o inscripciones duplicadas si Stripe reintenta el webhook?</span>
+                                <span>+</span>
+                            </div>
+                            <div class="faq-answer">
+                                Stripe reintenta los webhooks si no recibe un código HTTP 200 en pocos segundos. Aplicamos el principio de <strong>Idempotencia</strong>: al recibir <code>checkout.session.completed</code>, consultamos el registro <code>Pago</code> mediante <code>findByStripeSessionId(sessionId)</code>. Si el estado ya es <code>PAGADO</code>, retornamos 200 OK inmediatamente sin volver a insertar en la tabla <code>inscripciones</code>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p><strong>CampusFlow — Plataforma Educativa SaaS & Backend Architecture</strong></p>
+        <p style="margin-top: 0.3rem;">Dev Senior · Módulo 4: Clases 14 y 15 · Diseñada con Spring Boot 3, JPA, JWT y Stripe Checkout</p>
+    </footer>
+
+    <script>
+        const totalSteps = 13;
+        let completedSteps = JSON.parse(localStorage.getItem('campusflow_guide_completed') || '[]');
+
+        function updateProgress() {
+            const count = completedSteps.length;
+            const percentage = Math.round((count / totalSteps) * 100);
+            
+            document.getElementById('overallProgressBar').style.width = percentage + '%';
+            document.getElementById('progressPercentage').innerText = percentage + '%';
+            document.getElementById('stepsCount').innerText = `${count}/${totalSteps}`;
+
+            for (let i = 0; i < totalSteps; i++) {
+                const isComp = completedSteps.includes(i);
+                const navCheck = document.getElementById(`check-nav-${i}`);
+                const stepCheck = document.getElementById(`check-step-${i}`);
+                if (navCheck) navCheck.classList.toggle('completed', isComp);
+                if (stepCheck) stepCheck.checked = isComp;
+            }
+
+            localStorage.setItem('campusflow_guide_completed', JSON.stringify(completedSteps));
+        }
+
+        function toggleStepCheck(stepIndex) {
+            if (completedSteps.includes(stepIndex)) {
+                completedSteps = completedSteps.filter(x => x !== stepIndex);
+            } else {
+                completedSteps.push(stepIndex);
+            }
+            updateProgress();
+        }
+
+        function resetProgress() {
+            if (confirm('¿Deseas reiniciar el estado de avance de la guía?')) {
+                completedSteps = [];
+                updateProgress();
+            }
+        }
+
+        function toggleStepBody(index) {
+            const body = document.getElementById(`step-body-${index}`);
+            const btn = document.getElementById(`toggle-btn-${index}`);
+            if (body) {
+                body.classList.toggle('hidden');
+                btn.classList.toggle('collapsed');
+            }
+        }
+
+        function switchTab(buttonElement, targetId) {
+            const parent = buttonElement.closest('.code-container');
+            const tabs = parent.querySelectorAll('.code-tab');
+            const contents = parent.querySelectorAll('.code-content');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            buttonElement.classList.add('active');
+            const targetContent = parent.querySelector(`#${targetId}`);
+            if (targetContent) targetContent.classList.add('active');
+        }
+
+        function copyCode(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const text = el.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('¡Código copiado al portapapeles!');
+            });
+        }
+
+        function copyCurrentTabCode(btn) {
+            const parent = btn.closest('.code-container');
+            const activeContent = parent.querySelector('.code-content.active');
+            if (activeContent) {
+                navigator.clipboard.writeText(activeContent.innerText).then(() => {
+                    const origText = btn.innerHTML;
+                    btn.innerHTML = '✅ ¡Copiado!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        btn.innerHTML = origText;
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.innerText = msg;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '2rem';
+            toast.style.right = '2rem';
+            toast.style.background = 'var(--accent-green)';
+            toast.style.color = '#070b14';
+            toast.style.fontWeight = '700';
+            toast.style.padding = '0.75rem 1.25rem';
+            toast.style.borderRadius = '8px';
+            toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+            toast.style.zIndex = '9999';
+            toast.style.transition = 'all 0.3s ease';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        const archDetails = {
+            client: {
+                title: "1. Petición del Cliente (Frontend / Estudiante)",
+                text: "El estudiante autenticado en CampusFlow solicita adquirir un curso haciendo POST /api/pagos/checkout/pago-unico enviando el ID del curso y su Bearer Token."
+            },
+            backend: {
+                title: "2. StripeService en CampusFlow Backend",
+                text: "El backend recibe la solicitud, consulta el curso y crea una Checkout Session en los servidores de Stripe mediante el SDK con SessionCreateParams.Mode.PAYMENT. Registra el pago en MySQL con estado PENDIENTE y devuelve la URL de pago."
+            },
+            stripe_checkout: {
+                title: "3. Pasarela de Pago Alojada en Stripe",
+                text: "El frontend redirige al alumno a https://checkout.stripe.com. El usuario ingresa su tarjeta. Nuestro backend no toca ni almacena tarjetas de crédito."
+            },
+            webhook: {
+                title: "4. Webhook Asíncrono de Stripe",
+                text: "Cuando el pago se procesa exitosamente, Stripe envía una notificación HTTPS POST hacia nuestro endpoint /api/webhooks/stripe con el evento 'checkout.session.completed' firmado con la cabecera 'Stripe-Signature'."
+            },
+            verification: {
+                title: "5. Verificación Criptográfica e Idempotencia",
+                text: "StripeWebhookController valida la firma con Webhook.constructEvent y el secreto del webhook. Verifica si la sesión ya fue procesada antes para garantizar idempotencia."
+            },
+            activation: {
+                title: "6. Activación Transaccional en Base de Datos",
+                text: "InscripcionService crea el registro en la tabla 'inscripciones' vinculando al estudiante con el curso en estado ACTIVA y actualiza el estado del 'Pago' a PAGADO."
+            }
+        };
+
+        function showArchDetail(key) {
+            const info = archDetails[key];
+            if (!info) return;
+            const box = document.getElementById('archDetailBox');
+            document.getElementById('archDetailTitle').innerText = info.title;
+            document.getElementById('archDetailText').innerText = info.text;
+            box.classList.add('show');
+            
+            document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        function filterSteps() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.step-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function filterByTag(tag, btn) {
+            document.querySelectorAll('.filter-tags .tag-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.step-card').forEach(card => {
+                const cardTags = card.getAttribute('data-tags') || '';
+                card.style.display = (tag === 'all' || cardTags.includes(tag)) ? 'block' : 'none';
+            });
+        }
+
+        const simRequests = {
+            register: {
+                method: "POST",
+                headers: "Content-Type: application/json",
+                body: JSON.stringify({ email: "estudiante@campusflow.com", password: "PasswordSeguro123" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({
+                    token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlc3R1ZGlhbnRlQGNhbXB1c2Zsb3cuY29tIiwicm9sIjoiRVNUVURJQU5URSIsImlhdCI6MTc4OTk5...fQ",
+                    email: "estudiante@campusflow.com",
+                    rol: "ESTUDIANTE"
+                }, null, 2),
+                explanation: "ℹ️ Registro exitoso: Se crea el usuario en MySQL con rol ESTUDIANTE, se inicializa su Perfil y se emite el token JWT."
+            },
+            login: {
+                method: "POST",
+                headers: "Content-Type: application/json",
+                body: JSON.stringify({ email: "estudiante@campusflow.com", password: "PasswordSeguro123" }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({
+                    token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlc3R1ZGlhbnRlQGNhbXB1c2Zsb3cuY29tIiwicm9sIjoiRVNUVURJQU5URSIsImlhdCI6MTc4OTk5...fQ",
+                    email: "estudiante@campusflow.com",
+                    rol: "ESTUDIANTE"
+                }, null, 2),
+                explanation: "ℹ️ Autenticación exitosa: Usuario validado con BCrypt y nuevo token JWT generado."
+            },
+            get_cursos: {
+                method: "GET",
+                headers: "Accept: application/json (Público - Sin Token)",
+                body: "(Sin Body)",
+                status: "200 OK",
+                response: JSON.stringify([
+                    { id: 1, titulo: "Java Backend Avanzado", descripcion: "Spring Boot 3, JPA, JWT y Stripe", precio: 89.99, instructor: "Ana Alvarado" },
+                    { id: 2, titulo: "Microservicios con Spring Cloud", descripcion: "Docker, Kubernetes y Kafka", precio: 119.99, instructor: "Profesor Senior" }
+                ], null, 2),
+                explanation: "ℹ️ Catálogo público: Endpoint GET /api/cursos abierto sin requerir autenticación."
+            },
+            post_checkout: {
+                method: "POST",
+                headers: "Content-Type: application/json
+Authorization: Bearer <TOKEN_ESTUDIANTE>",
+                body: JSON.stringify({ cursoId: 1 }, null, 2),
+                status: "200 OK",
+                response: JSON.stringify({
+                    sessionId: "cs_test_a1b2c3d4e5f6_CAMPUSFLOW_SESSION",
+                    checkoutUrl: "https://checkout.stripe.com/c/pay/cs_test_a1b2c3d4e5f6_CAMPUSFLOW_SESSION"
+                }, null, 2),
+                explanation: "💳 Checkout Session generada en Stripe: Backend registró el Pago en estado PENDIENTE y devuelve la URL para redirigir al alumno."
+            },
+            post_webhook_ok: {
+                method: "POST",
+                headers: "Content-Type: application/json
+Stripe-Signature: t=1789999999,v1=9f8e7d6c5b4a3...",
+                body: JSON.stringify({
+                    id: "evt_1PtestEvent999",
+                    type: "checkout.session.completed",
+                    data: {
+                        object: {
+                            id: "cs_test_a1b2c3d4e5f6_CAMPUSFLOW_SESSION",
+                            customer: "cus_Rxxxx123",
+                            payment_intent: "pi_3Pxxxx456",
+                            payment_status: "paid",
+                            metadata: {
+                                cursoId: "1",
+                                usuarioEmail: "estudiante@campusflow.com"
+                            }
+                        }
+                    }
+                }, null, 2),
+                status: "200 OK",
+                response: "Evento recibido exitosamente",
+                explanation: "✅ Webhook validado: La firma Stripe-Signature fue verificada correctamente. El Pago cambió a PAGADO y se creó automáticamente la Inscripción ACTIVA del curso en MySQL."
+            },
+            post_webhook_bad_sig: {
+                method: "POST",
+                headers: "Content-Type: application/json
+Stripe-Signature: t=1789999999,v1=FIRMA_FALSA_O_EXPIRADA",
+                body: JSON.stringify({ id: "evt_fake", type: "checkout.session.completed" }, null, 2),
+                status: "400 Bad Request",
+                response: "Firma inválida",
+                explanation: "⛔ Seguridad activa: Webhook.constructEvent lanzó SignatureVerificationException porque la firma criptográfica no coincidió con el secret del webhook."
+            }
+        };
+
+        function updateSimRequest() {
+            const key = document.getElementById('endpointSelect').value;
+            const data = simRequests[key];
+            if (!data) return;
+
+            const badge = document.getElementById('simMethodBadge');
+            badge.innerText = data.method;
+            badge.className = `method-badge method-${data.method.toLowerCase()}`;
+
+            document.getElementById('simHeaders').innerText = data.headers;
+            document.getElementById('simBody').value = data.body;
+        }
+
+        function executeSimulatedRequest() {
+            const key = document.getElementById('endpointSelect').value;
+            const data = simRequests[key];
+            if (!data) return;
+
+            const statusBadge = document.getElementById('simStatusBadge');
+            statusBadge.innerText = data.status;
+            statusBadge.style.color = data.status.startsWith('2') ? 'var(--accent-green)' : 'var(--accent-rose)';
+
+            document.getElementById('simResponse').innerText = data.response;
+            document.getElementById('simExplanation').innerText = data.explanation;
+            showToast(`Petición ejecutada (${data.status})`);
+        }
+
+        function toggleFaq(el) {
+            el.classList.toggle('open');
+            const sign = el.querySelector('.faq-question span:last-child');
+            if (sign) {
+                sign.innerText = el.classList.contains('open') ? '−' : '+';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProgress();
+            updateSimRequest();
+        });
+    </script>
+</body>
+</html>

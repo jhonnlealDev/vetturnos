@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../Escritorio/Dev-cursor/resevaciones-backend"
+		},
+		{
+			"path": "../../Escritorio/Dev-cursor/reservation-frontend"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}
