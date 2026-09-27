@@ -1,0 +1,15 @@
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXVsYUBodWVsbGl0YXMuY29tIiwiaWF0IjoxNzkwNDY1MjAwLCJleHAiOjE3OTA1NTE2MDB9.wQvi-UhGI9m_Ch_wS5vwEpCqInCl_ELQ3sfQsVWnqI4"
+}
+
+eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhbmFAdGllbmRhLmNvbSIsInJvbCI6IkFETUlOIiwiaWF0IjoxNzg3NDI4MjI3LCJleHAiOjE3ODc0MzE4Mjd9.UNUMRHjwrF2EPtZV1wxvSg_ip86K_GqmZJQkQ9NJUQc0mNkJILtA_VleohFD1_Hc
+
+anterio token admin
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJ0YUBodWVsbGl0YXMuY29tIiwiaWF0IjoxNzkwNDY1Nzc2LCJleHAiOjE3OTA1NTIxNzZ9.Lw1WyD9FyvdsgRjaMfsRoc4tUWU_8eFQWhRg0M1kqKA"
+}
+nuevo token admin
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJ0YUBodWVsbGl0YXMuY29tIiwiaWF0IjoxNzkwNDY1ODk5LCJleHAiOjE3OTA1NTIyOTl9.dW3bYfyS0aOYnA6haXlp8XzGHFkQ5hJo2nDQtlf-XmM"
+}
+
