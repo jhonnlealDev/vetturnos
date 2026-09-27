@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +28,7 @@ public class PropietarioController {
     }
 
     @PostMapping
-    public ResponseEntity<PropietarioDTO> crearPropietario(@RequestBody PropietarioRequest request) {
+    public ResponseEntity<PropietarioDTO> crearPropietario(@Valid @RequestBody PropietarioRequest request) {
         PropietarioDTO nuevo = propietarioService.crearPropietario(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }

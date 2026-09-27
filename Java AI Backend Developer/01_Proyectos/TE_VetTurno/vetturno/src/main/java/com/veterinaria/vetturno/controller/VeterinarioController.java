@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +28,7 @@ public class VeterinarioController {
     }
 
     @PostMapping
-    public ResponseEntity<VeterinarioDTO> crearVeterinario(@RequestBody VeterinarioRequest request) {
+    public ResponseEntity<VeterinarioDTO> crearVeterinario(@Valid @RequestBody VeterinarioRequest request) {
         VeterinarioDTO nuevo = veterinarioService.crearVeterinario(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }

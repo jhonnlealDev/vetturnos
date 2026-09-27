@@ -8,6 +8,9 @@ import com.veterinaria.vetturno.dto.AuthResponse;
 import com.veterinaria.vetturno.dto.LoginRequest;
 import com.veterinaria.vetturno.dto.RegistroRequest;
 import com.veterinaria.vetturno.service.AuthService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,13 +28,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registrar(@RequestBody RegistroRequest request) {
+    public ResponseEntity<AuthResponse> registrar(@Valid @RequestBody RegistroRequest request) {
         AuthResponse response = authService.registrar(request);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
     }

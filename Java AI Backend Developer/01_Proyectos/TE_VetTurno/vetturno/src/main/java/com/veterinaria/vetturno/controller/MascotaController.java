@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -28,7 +28,7 @@ public class MascotaController {
     }
 
     @PostMapping
-    public ResponseEntity<MascotaDTO> crearMascota(@RequestBody MascotaRequest request) {
+    public ResponseEntity<MascotaDTO> crearMascota(@Valid @RequestBody MascotaRequest request) {
         MascotaDTO nueva = mascotaService.crearMascota(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
     }

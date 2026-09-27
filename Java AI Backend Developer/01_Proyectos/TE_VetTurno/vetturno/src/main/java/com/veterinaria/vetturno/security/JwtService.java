@@ -32,7 +32,7 @@ public class JwtService {
     }
 
     public String extraerEmail(String token) {
-        return extraerClaim(token, Claims::getSubject);
+        return extraerClaim(token, claims -> claims.getSubject());
     }
 
     public <T> T extraerClaim(String token, Function<Claims, T> claimsResolver) {
@@ -50,7 +50,7 @@ public class JwtService {
     }
 
     private Date extraerExpiracion(String token) {
-        return extraerClaim(token, Claims::getExpiration);
+        return extraerClaim(token, claims -> claims.getExpiration());
     }
 
     private Claims extraerTodosLosClaims(String token) {

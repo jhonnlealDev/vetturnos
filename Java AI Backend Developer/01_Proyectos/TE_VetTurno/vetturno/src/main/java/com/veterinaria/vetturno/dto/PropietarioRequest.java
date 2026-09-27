@@ -4,10 +4,19 @@
  */
 package com.veterinaria.vetturno.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class PropietarioRequest {
 
+    @NotBlank(message = "El nombre es obligatorio.")
     private String nombre;
+
+    @NotBlank(message = "El telefono es obligatorio.")
     private String telefono;
+
+    @NotBlank(message = "El email es obligatorio.")
+    @Email(message = "El email debe tener un formato valido.")
     private String email;
 
     public PropietarioRequest() {
