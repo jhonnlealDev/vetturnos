@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+/*@RestControllerAdvice
+public class GlobalExceptionHandler {*/
+
+@RestControllerAdvice(basePackages = "com.veterinaria.vetturno.controller")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -28,8 +31,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
                 "Error de validacion en los datos de entrada.",
-                errores
-        );
+                errores);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
@@ -38,8 +40,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
-                null
-        );
+                null);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
 
@@ -48,8 +49,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(
                 HttpStatus.UNAUTHORIZED.value(),
                 "Credenciales invalidas. Verifique su email y contrasena.",
-                null
-        );
+                null);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(apiError);
     }
 
@@ -58,8 +58,7 @@ public class GlobalExceptionHandler {
         ApiError apiError = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Ha ocurrido un error interno en el servidor.",
-                null
-        );
+                null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 }

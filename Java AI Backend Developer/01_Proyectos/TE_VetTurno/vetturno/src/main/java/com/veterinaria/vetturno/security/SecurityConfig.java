@@ -34,7 +34,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Rutas publicas: registro, login y documentacion
-                        .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-ui",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/error")
                         .permitAll()
                         // Solo ADMIN puede registrar veterinarios (devuelve 403 a USER)
                         .requestMatchers(HttpMethod.POST, "/api/veterinarios").hasRole("ADMIN")
