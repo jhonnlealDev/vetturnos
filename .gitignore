@@ -1,0 +1,7 @@
+*.exe
+*.msi
+*.iso
+*.dmg
+*.pkg
+.DS_Store
+Thumbs.db
